@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Lewis_Store_Console_Inventory_System_BRD/1.0.0": {
+        "runtime": {
+          "Lewis_Store_Console_Inventory_System_BRD.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Lewis_Store_Console_Inventory_System_BRD/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
