@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj": {}
+    "C:\\Users\\Backspace SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD_Project\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj": {
+    "C:\\Users\\Backspace SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD_Project\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
+        "projectUniqueName": "C:\\Users\\Backspace SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD_Project\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
         "projectName": "Lewis_Store_Console_Inventory_System_BRD",
-        "projectPath": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
-        "packagesPath": "C:\\Users\\Backspace_SD\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\obj\\",
+        "projectPath": "C:\\Users\\Backspace SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD_Project\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
+        "packagesPath": "C:\\Users\\Backspace SD\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Backspace SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD_Project\\Lewis_Store_Console_Inventory_System_BRD\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Backspace_SD\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\Backspace SD\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
