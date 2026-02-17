@@ -89,6 +89,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         {
                             Continue = false;
                             Console.WriteLine("Exiting the program. Goodbye!");
+                            Console.ReadKey();
                             break;
                         }
 
