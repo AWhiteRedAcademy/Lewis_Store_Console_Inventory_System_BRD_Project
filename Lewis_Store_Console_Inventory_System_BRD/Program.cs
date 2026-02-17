@@ -2,12 +2,13 @@
 {
     internal class Program
     {
-        static string[] itemnames = new string[100];
-        static int[] itemquantities = new int[100];
-        static double[] itemprices = new double[100];
-        static int itemcount = 0;
-        static void Main(string[] args)
+
+        void Main(string[] args)
         {
+            string[] itemnames = new string[100];
+            int[] itemquantities = new int[100];
+            double[] itemprices = new double[100];
+            int itemcount = 0;
             Console.WriteLine("The Lewis Store Inventory Management System");
 
         start:
