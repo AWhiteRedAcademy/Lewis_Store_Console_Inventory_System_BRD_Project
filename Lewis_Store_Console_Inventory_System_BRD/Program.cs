@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("This is a console output");
+            Console.WriteLine("The Lewis Store Inventory Management System");
         }
     }
 }
