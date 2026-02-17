@@ -1,58 +1,74 @@
-﻿namespace Lewis_Store_Console_Inventory_System_BRD
+﻿using System;
+
+namespace Lewis_Store_Console_Inventory_System_BRD
 {
     internal class Program
     {
 
-        void Main(string[] args)
+        static void Main(string[] args)
         {
-            string[] itemnames = new string[100];
-            int[] itemquantities = new int[100];
-            double[] itemprices = new double[100];
+            string[] Sitemnames = new string[100];
+            int[] Iitemquantities = new int[100];
+            double[] Ditemprices = new double[100];
             int itemcount = 0;
-            Console.WriteLine("The Lewis Store Inventory Management System");
+            bool Continue = true;
 
-        start:
-            Console.WriteLine("Please select an option:");
-            Console.WriteLine("1. Add Item");
-            Console.WriteLine("2. View Inventory");
-            Console.WriteLine("3. Exit");
-            string choice = Console.ReadLine();
-            goto start;
-            while (true)
+            while (Continue)
             {
 
+                Console.WriteLine("The Lewis Store Inventory Management System");
+                Console.WriteLine("Please select an option:");
+                Console.WriteLine("1. Add Item");
+                Console.WriteLine("2. View Inventory");
+                Console.WriteLine("3. Exit");
+
+                int choice = int.Parse(Console.ReadLine());
                 switch (choice)
                 {
-                    case "1":
-                        if (itemcount < 100)
+                    case 1:
                         {
-                            Console.WriteLine("Enter item name:");
-                            itemnames[itemcount] = Console.ReadLine();
-                            Console.WriteLine("Enter item quantity:");
-                            itemquantities[itemcount] = int.Parse(Console.ReadLine());
-                            Console.WriteLine("Enter item price:");
-                            itemprices[itemcount] = double.Parse(Console.ReadLine());
-                            itemcount++;
-                            Console.WriteLine("Item added successfully!");
+                            if (itemcount < 100)
+                            {
+                                Console.WriteLine("Enter item name:");
+                                Sitemnames[itemcount] = Console.ReadLine();
+                                Console.WriteLine("Enter item quantity:");
+                                Iitemquantities[itemcount] = int.Parse(Console.ReadLine());
+                                Console.WriteLine("Enter item price:");
+                                Ditemprices[itemcount] = double.Parse(Console.ReadLine());
+                                itemcount++;
+                                Console.WriteLine("Item added successfully!");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Inventory is full. Cannot add more items.");
+                            }
+                            break;
                         }
-                        else
+
+                    case 2:
                         {
-                            Console.WriteLine("Inventory is full. Cannot add more items.");
+                            Console.WriteLine("Current Inventory:");
+                            for (int i = 0; i < itemcount; i++)
+                            {
+                                Console.WriteLine($"Item: {Sitemnames[i]}, Quantity: {Iitemquantities[i]}, Price: {Ditemprices[i]:F2}");
+                            }
+                            break;
                         }
-                        break;
-                    case "2":
-                        Console.WriteLine("Current Inventory:");
-                        for (int i = 0; i < itemcount; i++)
+
+                    case 3:
                         {
-                            Console.WriteLine($"Item: {itemnames[i]}, Quantity: {itemquantities[i]}, Price: ${itemprices[i]:F2}");
+                            Continue = false;
+                            Console.WriteLine("Exiting the program. Goodbye!");
+                            break;
                         }
-                        break;
-                    case "3":
-                        Console.WriteLine("Exiting the program. Goodbye!");
-                        return;
+
                     default:
-                        Console.WriteLine("Invalid option. Please try again.");
-                        break;
+                        {
+                            Console.WriteLine("Invalid option. Please try again.");
+                            Console.ReadKey();
+                            Console.Clear();
+                            break;
+                        }
                 }
             }
         }
