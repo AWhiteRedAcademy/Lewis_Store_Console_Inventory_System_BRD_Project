@@ -51,7 +51,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             Console.WriteLine("Current Inventory:");
                             for (int i = 0; i < itemcount; i++)
                             {
-                                Console.WriteLine("Item: " + Sitemnames[i] + "Quantity: " + Iitemquantities[i] + "Price: " + Ditemprices[i]);
+                                Console.WriteLine("Item: " + Sitemnames[i] + " Quantity: " + Iitemquantities[i] + " Price: R" + Ditemprices[i]);
                                 Console.ReadKey();
                             }
                             break;
