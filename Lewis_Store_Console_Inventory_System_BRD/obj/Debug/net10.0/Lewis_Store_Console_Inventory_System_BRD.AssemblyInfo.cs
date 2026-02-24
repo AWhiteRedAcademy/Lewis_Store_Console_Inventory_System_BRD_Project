@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lewis_Store_Console_Inventory_System_BRD")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2728a41a07e2c84fcf4e30e2d3d7721472ca0335")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b5d0c0c6f2355567ecceec8920eda84107281b6c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lewis_Store_Console_Inventory_System_BRD")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lewis_Store_Console_Inventory_System_BRD")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
