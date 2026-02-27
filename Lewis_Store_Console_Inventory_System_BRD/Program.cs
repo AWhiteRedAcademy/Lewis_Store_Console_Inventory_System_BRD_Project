@@ -59,7 +59,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     Console.Clear();
                     goto MenuStart;
                 }
-               
+
                 switch (MenuChoice)
                 {
                     case 1:
@@ -78,6 +78,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     case 2:
                         {
                             Console.Clear();
+                            
+                            for (int i = 0; i < itemCount i++)
+                            {
+
+                            }
 
                             break;
                         }
