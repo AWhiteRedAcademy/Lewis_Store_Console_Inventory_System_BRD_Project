@@ -13,6 +13,12 @@
       "project": "Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
       "projectTarget": "",
       "name": "Program.cs(1)"
+    },
+    {
+      "type": "coreclr",
+      "name": "Program.cs(2)",
+      "project": "Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
+      "projectTarget": ""
     }
   ]
 }

@@ -10,7 +10,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
     {
 
 
-        void ItemSearch(string ItemName, string[] ItemN) 
+        public static void ItemSearch(string ItemName, string[] ItemN) 
         {
 
         }
@@ -19,10 +19,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         {
             Console.WriteLine("Item Add\n====================\nItem Name: ");
             string Name = Console.ReadLine();
+
             Console.WriteLine("Item Description: ");
             string Desc = Console.ReadLine();
+
             Console.WriteLine("Item Quantity: ");
             int Qty = int.Parse(Console.ReadLine());
+
             Console.WriteLine("Item Price 'Excl.VAT': ");
             double Price = double.Parse(Console.ReadLine());
 
@@ -78,12 +81,15 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     case 2:
                         {
                             Console.Clear();
-                            
-                            for (int i = 0; i < itemCount i++)
+                            Console.WriteLine("View Product Stock\n===============================================\n");
+                            for (int i = 0; i < itemCount; i++)
                             {
 
-                            }
+                                Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
+                                    $"===============================================\n");
 
+                            }
+                            Console.ReadKey();
                             break;
                         }
                     case 3:
