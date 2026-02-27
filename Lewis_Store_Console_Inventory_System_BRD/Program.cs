@@ -1,103 +1,114 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading.Channels;
 
 namespace Lewis_Store_Console_Inventory_System_BRD
 {
+
+
     internal class Program
     {
 
+
+        public static void ItemSearch(string ItemName, string[] ItemN) 
+        {
+
+        }
+
+        public static (string Name, string Desc, int Qty, double Price) ItemAdd()
+        {
+            Console.WriteLine("Item Add\n====================\nItem Name: ");
+            string Name = Console.ReadLine();
+
+            Console.WriteLine("Item Description: ");
+            string Desc = Console.ReadLine();
+
+            Console.WriteLine("Item Quantity: ");
+            int Qty = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Item Price 'Excl.VAT': ");
+            double Price = double.Parse(Console.ReadLine());
+
+            Console.WriteLine("Item Added Successfully");
+            Console.ReadKey();
+            Console.Clear();
+
+            return (Name, Desc, Qty, Price);
+
+
+        }
+
+
         static void Main(string[] args)
         {
-            string[] Sitemnames = new string[100];
-            int[] Iitemquantities = new int[100];
-            double[] Ditemprices = new double[100];
-            int itemcount = 0;
+            string[] ItemN = new string[100];   //item name
+            string[] ItemD = new string[100];   //item description
+            int[] ItemQ = new int[100];         //item quantity
+            double[] ItemP = new double[100];   //item price
+
+            int itemCount = 0;
             bool Continue = true;
 
             while (Continue)
             {
-
+            MenuStart:
                 Console.WriteLine("The Lewis Store Inventory Management System");
-                Console.WriteLine("Please select an option:");
-                Console.WriteLine("1. Add Item");
-                Console.WriteLine("2. View Inventory");
-                Console.WriteLine("3. Sell items");
-                Console.WriteLine("4. Exit");
+                Console.WriteLine("Please select an option:\n1. Add Item\n2. View Inventory\n3. Sell Items\n4. Exit");
 
-                int choice = int.Parse(Console.ReadLine());
-                switch (choice)
+                if (!int.TryParse(Console.ReadLine(), out int MenuChoice) || MenuChoice > 4)
+                {
+                    Console.WriteLine("Invalid Character, Is Not A Integer or Out Of Bounds");
+                    Console.ReadKey();
+                    Console.Clear();
+                    goto MenuStart;
+                }
+
+                switch (MenuChoice)
                 {
                     case 1:
                         {
-                            if (itemcount < 100)
-                            {
-                                Console.WriteLine("Enter item name:");
-                                Sitemnames[itemcount] = Console.ReadLine();
-                                Console.WriteLine("Enter item quantity:");
-                                Iitemquantities[itemcount] = int.Parse(Console.ReadLine());
-                                Console.WriteLine("Enter item price:");
-                                Ditemprices[itemcount] = double.Parse(Console.ReadLine());
-                                itemcount++;
-                                Console.WriteLine("Item added successfully!");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Inventory is full. Cannot add more items.");
-                            }
+                            Console.Clear();
+                            var Add = ItemAdd();
+                            ItemN[itemCount] = Add.Name;
+                            ItemD[itemCount] = Add.Desc;
+                            ItemQ[itemCount] = Add.Qty;
+                            ItemP[itemCount] = Add.Price;
+
+                            itemCount++;
                             break;
                         }
 
                     case 2:
                         {
-                            Console.WriteLine("Current Inventory:");
-                            for (int i = 0; i < itemcount; i++)
+                            Console.Clear();
+                            Console.WriteLine("View Product Stock\n===============================================\n");
+                            for (int i = 0; i < itemCount; i++)
                             {
-                                Console.WriteLine("Item: " + Sitemnames[i] + " Quantity: " + Iitemquantities[i] + " Price: R" + Ditemprices[i]);
-                                Console.ReadKey();
+
+                                Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
+                                    $"===============================================\n");
+
                             }
+                            Console.ReadKey();
                             break;
                         }
                     case 3:
                         {
-                            Console.WriteLine("Enter item name to sell:");
-                            string SitemNameToSell = Console.ReadLine();
-                            int index = Array.IndexOf(Sitemnames, SitemNameToSell);
-                            if (index != -1)
-                            {
-                                Console.WriteLine("Enter quantity to sell:");
-                                int quantityToSell = int.Parse(Console.ReadLine());
-                                if (quantityToSell <= Iitemquantities[index])
-                                {
-                                    Iitemquantities[index] -= quantityToSell;
-                                    double totalPrice = quantityToSell * Ditemprices[index];
-                                    Console.WriteLine("Sold " + quantityToSell + " of " + Sitemnames[index] + " for a total of $" + totalPrice);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Not enough stock to sell. Available quantity: " + Iitemquantities[index]);
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Item not found in inventory.");
-                                Console.ReadKey();
-                                Console.Clear();
-                            }
+                            Console.Clear();
+
                             break;
-                            
                         }
                     case 4:
                         {
-                            Continue = false;
-                            Console.WriteLine("Exiting the program. Goodbye!");
-                            Console.ReadKey();
+                            Console.Clear();
+                            Console.WriteLine("Exiting now");
+                            System.Environment.Exit(0);
                             break;
                         }
 
                     default:
                         {
-                            Console.WriteLine("Invalid option. Please try again.");
-                            Console.ReadKey();
-                            Console.Clear();
+
                             break;
                         }
                 }
