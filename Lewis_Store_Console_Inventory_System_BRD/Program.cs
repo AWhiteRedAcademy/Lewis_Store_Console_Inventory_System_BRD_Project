@@ -242,16 +242,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             Console.WriteLine("CHECKOUT\n===============================================\n");
                             var CheckTable = new Table();
 
-                            CheckTable.Columns.Add("Item");
-                            CheckTable.Columns.Add("Qty");
-                            CheckTable.Columns.Add("Price.Excl VAT");
+                            CheckTable.AddColumn("Item");
+                            CheckTable.AddColumns("Qty");
+                            CheckTable.AddColumns("Price.Excl VAT");
 
                             foreach (int item in SellItemIndex) 
                             {
-                                CheckTable.AddRow(ItemN[item], ItemQ[item], ItemP[item]);    
+                                CheckTable.AddRow(ItemN[item], ItemQ[item].ToString(), ItemP[item].ToString());    
                             }
 
-                            Console.Write(CheckTable);
+                            AnsiConsole.Write(CheckTable);
 
                             break;
                         }
