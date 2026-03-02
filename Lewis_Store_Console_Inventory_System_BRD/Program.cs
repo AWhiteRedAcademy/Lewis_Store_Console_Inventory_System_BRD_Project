@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Channels;
+using Spectre.Console;
 
 namespace Lewis_Store_Console_Inventory_System_BRD
 {
@@ -27,6 +28,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         public static (string Name, string Desc, int Qty, decimal Price) ItemAdd()
         {
             ErrorStart:
+            Console.WriteLine("Selling Stock\n===============================================\n");
             Console.Clear();
             Console.WriteLine("Item Add\t(*Cancel)\n====================\nItem Name: ");
             string Name = Console.ReadLine();
@@ -98,24 +100,35 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             }
         }
 
-        public static void SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
+        public static (decimal FinalAmount, decimal FinalAmountVAT, int ItemIndex, int Qty) SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
         {
             string ItemName;
         IfError:
+
 
             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
 
             Console.WriteLine("Enter Item Name To Add To Cart, Item Name: ");
             ItemName = Console.ReadLine();
             if (ItemName == "") { Console.WriteLine("Error Item Does Not Exist"); goto IfError; }
-        
+
 
             int? ItemIndex = ItemSearch(ItemName, ItemN);
             if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); goto IfError; }
-            
-
-
             Console.WriteLine("To Checkout Type: Checkout");
+
+            Console.WriteLine("How Many Do You Wish To Buy?: ");
+            if (!int.TryParse(Console.ReadLine(), out int Qty))
+            {
+                Console.WriteLine("Error Item Does Not Exist"); goto IfError;
+            }else if (Qty > ItemQ[ItemIndex.Value])
+            {
+                Console.WriteLine("Warning you cannot buy more than whats available in stock."); goto IfError;
+            }
+
+            decimal FinalAmount = (ItemP[ItemIndex.Value] * ItemQ[ItemIndex.Value]);
+            decimal FinalAmountVAT = VATCAL(FinalAmount);
+            return (FinalAmount, FinalAmountVAT, ItemIndex.Value, Qty);
         }
 
         public static decimal VATCAL(decimal Price)
@@ -133,6 +146,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             int itemCount = 0;
             bool Continue = true;
+
+            decimal TotalPrice, TotalPriceVAT;
 
             while (Continue)
             {
@@ -184,21 +199,59 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         }
                     case 3:
                         {
+                            TotalPrice = 0; TotalPriceVAT = 0;
+
                             Console.Clear();
                             
                             Console.WriteLine("Selling Stock\n===============================================\nAdd Order To Cart? Y/N: ");
                             if (Console.ReadLine().ToUpper() == "N") { Console.Clear(); break; }
+
+                            int[] SellItemIndex = new int[itemCount];
+                            int SellOrder = 0;
 
                             do
                             {
                                 Console.Clear();
                                 Console.WriteLine("Selling Stock\n===============================================\n");
 
-                                SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+                                var SellItems = SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+
+                                TotalPrice += SellItems.FinalAmount;
+                                TotalPriceVAT += SellItems.FinalAmountVAT;
+
+                                if (SellItems.ItemIndex == 0 && !SellItemIndex.Contains(0))
+                                {
+
+                                    SellItemIndex[SellOrder] = SellItems.ItemIndex;
+                                    SellOrder++;
+
+                                }
+                                else if (SellItems.ItemIndex != 0 && !SellItemIndex.Contains(SellItems.ItemIndex))
+                                {
+
+                                    SellItemIndex[SellOrder] = SellItems.ItemIndex;
+                                    SellOrder++;
+
+                                }
+                                else { Console.WriteLine("Already have this item in checkout"); Console.ReadKey(); }
 
                             } while (Console.ReadLine().ToUpper() != "CHECKOUT");
 
+
                             Console.Clear();
+                            Console.WriteLine("CHECKOUT\n===============================================\n");
+                            var CheckTable = new Table();
+
+                            CheckTable.Columns.Add("Item");
+                            CheckTable.Columns.Add("Qty");
+                            CheckTable.Columns.Add("Price.Excl VAT");
+
+                            foreach (int item in SellItemIndex) 
+                            {
+                                CheckTable.AddRow(ItemN[item], ItemQ[item], ItemP[item]);    
+                            }
+
+                            Console.Write(CheckTable);
 
                             break;
                         }
