@@ -26,17 +26,42 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
         public static (string Name, string Desc, int Qty, decimal Price) ItemAdd()
         {
+            ErrorStart:
             Console.WriteLine("Item Add\n====================\nItem Name: ");
             string Name = Console.ReadLine();
+            if (Name == null) 
+            {
+                Console.WriteLine("Error Invalid Name Please Try Again");
+                Console.ReadKey();
+                goto ErrorStart;
+
+            }
 
             Console.WriteLine("Item Description: ");
             string Desc = Console.ReadLine();
+            if (Desc == null)
+            {
+                Console.WriteLine("Error Invalid Description Please Try Again");
+                Console.ReadKey();
+                goto ErrorStart;
+
+            }
 
             Console.WriteLine("Item Quantity: ");
-            int Qty = int.Parse(Console.ReadLine());
+            if (int.TryParse(Console.ReadLine(), out int Qty))
+            {
+                Console.WriteLine("Error Invalid Quantity, Has to Be A Valid Number And Not Less Than 0");
+                Console.ReadKey();
+                goto ErrorStart;
+            }
 
             Console.WriteLine("Item Price 'Excl.VAT': ");
-            decimal Price = decimal.Parse(Console.ReadLine());
+            if (decimal.TryParse(Console.ReadLine(), out decimal Price))
+            {
+                Console.WriteLine("Error Invalid Price, Has to Be A Valid Number And Not Less Than R0");
+                Console.ReadKey();
+                goto ErrorStart;
+            }
 
             Console.WriteLine("Item Added Successfully");
             Console.ReadKey();
