@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Channels;
+using Spectre.Console;
 
 namespace Lewis_Store_Console_Inventory_System_BRD
 {
@@ -27,6 +28,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         public static (string Name, string Desc, int Qty, decimal Price) ItemAdd()
         {
             ErrorStart:
+            Console.WriteLine("Selling Stock\n===============================================\n");
             Console.Clear();
             Console.WriteLine("Item Add\t(*Cancel)\n====================\nItem Name: ");
             string Name = Console.ReadLine();
@@ -89,33 +91,60 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         public static void DisplayStock (string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
         {
 
-            for (int i = 0; i < itemCount; i++)
+            //{ for (int i = 0; i < itemCount; i++)
+            //{
+
+              //  Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
+              //      $"===============================================\n");
+
+            //}    
+
+            var DisplayTable = new Table();
+
+            DisplayTable.AddColumn("Item");
+            DisplayTable.AddColumn("Description");
+            DisplayTable.AddColumns("Qty");
+            DisplayTable.AddColumns("Price.Excl VAT");
+
+            for (int item = 0; item < itemCount; item++)
             {
-
-                Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
-                    $"===============================================\n");
-
+                DisplayTable.AddRow(ItemN[item], ItemD[item], ItemQ[item].ToString(), "R" + ItemP[item].ToString());
             }
+
+            AnsiConsole.Write(DisplayTable);
         }
 
-        public static void SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
+        public static (decimal FinalAmount, decimal FinalAmountVAT, int ItemIndex, int Qty) SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
         {
             string ItemName;
-        IfError:
 
+            decimal FinalAmount = 0;
+            decimal FinalAmountVAT = 0;
             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
 
             Console.WriteLine("Enter Item Name To Add To Cart, Item Name: ");
             ItemName = Console.ReadLine();
-            if (ItemName == "") { Console.WriteLine("Error Item Does Not Exist"); goto IfError; }
-        
+            if (ItemName == "") { Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0); }
+
 
             int? ItemIndex = ItemSearch(ItemName, ItemN);
-            if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); goto IfError; }
-            
+            if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0); }       
+
+            Console.WriteLine("How Many Do You Wish To Buy?: ");
+            if (!int.TryParse(Console.ReadLine(), out int Qty))
+            {
+                Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0);
+            }else if (Qty > ItemQ[ItemIndex.Value])
+            {
+                Console.WriteLine("Warning you cannot buy more than whats available in stock."); return (0, 0, 0, 0);
+            }
+ 
+
+            FinalAmount = (ItemP[ItemIndex.Value] * Qty);
+            FinalAmountVAT = VATCAL(FinalAmount);
 
 
-            Console.WriteLine("To Checkout Type: Checkout");
+            return (FinalAmount, FinalAmountVAT, ItemIndex.Value, Qty);
         }
 
         public static decimal VATCAL(decimal Price)
@@ -133,6 +162,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             int itemCount = 0;
             bool Continue = true;
+
+            decimal TotalPrice, TotalPriceVAT;
 
             while (Continue)
             {
@@ -180,26 +211,64 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             Console.Clear();
                             Console.WriteLine("View Product Stock\n===============================================\n");
                             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
+
+                            Console.WriteLine("Press Any Key To Continue");
+                            Console.ReadKey();
+                            Console.Clear();
+
                             break;
                         }
                     case 3:
                         {
+                            TotalPrice = 0; TotalPriceVAT = 0;
+
                             Console.Clear();
                             
                             Console.WriteLine("Selling Stock\n===============================================\nAdd Order To Cart? Y/N: ");
                             if (Console.ReadLine().ToUpper() == "N") { Console.Clear(); break; }
+
+                            List<int> ItemsOrdered = new List<int>(itemCount);
+
+                            var CheckTable = new Table();
+
+                            CheckTable.AddColumn("Item");
+                            CheckTable.AddColumns("Qty");
+                            CheckTable.AddColumns("Price.Excl VAT");
 
                             do
                             {
                                 Console.Clear();
                                 Console.WriteLine("Selling Stock\n===============================================\n");
 
-                                SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+                                var SellItems = SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+
+                                if (!ItemsOrdered.Contains(SellItems.ItemIndex))
+                                {
+
+                                    ItemQ[SellItems.ItemIndex] -= SellItems.Qty;
+
+                                    TotalPrice += SellItems.FinalAmount;
+                                    TotalPriceVAT += SellItems.FinalAmountVAT;
+
+                                    CheckTable.AddRow(ItemN[SellItems.ItemIndex], SellItems.Qty.ToString(), "R" + ItemP[SellItems.ItemIndex].ToString());
+
+                                    ItemsOrdered.Add(SellItems.ItemIndex);
+
+                                }
+                                else { Console.WriteLine("Already have this item in checkout, Type 'Checkout' to Checkout");}
 
                             } while (Console.ReadLine().ToUpper() != "CHECKOUT");
 
-                            Console.Clear();
 
+                            Console.Clear();
+                            Console.WriteLine("CHECKOUT\n===============================================\n");
+
+                            CheckTable.AddRow("","","");
+                            CheckTable.AddRow("","Total Excl.VAT: ", "R"+TotalPrice.ToString());
+                            CheckTable.AddRow("","Total Incl.VAT(15%): ", "R"+TotalPriceVAT.ToString());
+
+                            AnsiConsole.Write(CheckTable);
+                            
                             break;
                         }
                     case 4:
