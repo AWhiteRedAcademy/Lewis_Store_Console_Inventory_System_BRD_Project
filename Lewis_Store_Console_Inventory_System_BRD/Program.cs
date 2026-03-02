@@ -27,9 +27,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         public static (string Name, string Desc, int Qty, decimal Price) ItemAdd()
         {
             ErrorStart:
-            Console.WriteLine("Item Add\n====================\nItem Name: ");
+            Console.Clear();
+            Console.WriteLine("Item Add\t(*Cancel)\n====================\nItem Name: ");
             string Name = Console.ReadLine();
-            if (Name == null) 
+
+            if (Name.ToUpper() == "CANCEL")
+            {
+                return ("", "", 0, 0);
+            }
+
+            if (Name == "") 
             {
                 Console.WriteLine("Error Invalid Name Please Try Again");
                 Console.ReadKey();
@@ -39,7 +46,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             Console.WriteLine("Item Description: ");
             string Desc = Console.ReadLine();
-            if (Desc == null)
+            if (Desc == "")
             {
                 Console.WriteLine("Error Invalid Description Please Try Again");
                 Console.ReadKey();
@@ -48,19 +55,28 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             }
 
             Console.WriteLine("Item Quantity: ");
-            if (int.TryParse(Console.ReadLine(), out int Qty))
+            if (!int.TryParse(Console.ReadLine(), out int Qty) || Qty < 0)
             {
-                Console.WriteLine("Error Invalid Quantity, Has to Be A Valid Number And Not Less Than 0");
+                Console.WriteLine("Error Invalid Quantity, Has to Be A Valid Number And Cannot Be Less Than 0");
                 Console.ReadKey();
                 goto ErrorStart;
             }
 
             Console.WriteLine("Item Price 'Excl.VAT': ");
-            if (decimal.TryParse(Console.ReadLine(), out decimal Price))
+            string sPrice = Console.ReadLine();
+
+            if (sPrice.Contains("."))
             {
-                Console.WriteLine("Error Invalid Price, Has to Be A Valid Number And Not Less Than R0");
+                sPrice = sPrice.Replace(".", ",");
+            }
+
+            if (!decimal.TryParse(sPrice, out decimal Price) || Price < 0)
+            {
+                
+                Console.WriteLine("Error Invalid Price, Has to Be A Valid Number And Cannot Be Less Than R0");
                 Console.ReadKey();
                 goto ErrorStart;
+    
             }
 
             Console.WriteLine("Item Added Successfully");
@@ -85,6 +101,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         public static void SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
         {
             string ItemName;
+        IfError:
+
             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
 
             Console.WriteLine("Enter Item Name To Add To Cart, Item Name: ");
@@ -94,8 +112,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             int? ItemIndex = ItemSearch(ItemName, ItemN);
             if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); goto IfError; }
+            
 
-            IfError:
+
             Console.WriteLine("To Checkout Type: Checkout");
         }
 
@@ -134,15 +153,24 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 {
                     case 1:
                         {
-                            Console.Clear();
+
                             if (itemCount < 100)
                             {
                                 var Add = ItemAdd();
-                                ItemN[itemCount] = Add.Name; ItemD[itemCount] = Add.Desc; ItemQ[itemCount] = Add.Qty; ItemP[itemCount] = Add.Price; //Adding item to parallel arrays
+                                if (Add.Name == "" && Add.Desc == "" && Add.Qty == 0 && Add.Price == 0)
+                                {
+                                    Console.WriteLine("Adding Item Cancelled");
+                                    Console.ReadKey();
+                                    Console.Clear();
+                                    break;
+                                }
 
+                                ItemN[itemCount] = Add.Name; ItemD[itemCount] = Add.Desc; ItemQ[itemCount] = Add.Qty; ItemP[itemCount] = Add.Price; //Adding item to parallel arrays
                                 itemCount++;
                             }
-                            else Console.WriteLine("Error Maximium Item Count Reached No More May Be Added"); Console.Clear();
+                            else Console.WriteLine("Error Maximium Item Count Reached No More May Be Added"); 
+                            
+                            Console.Clear();
 
                             break;
                         }
