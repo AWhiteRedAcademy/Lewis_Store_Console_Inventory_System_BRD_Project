@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "AZxX4OX1pYs=",
+  "dgSpecHash": "xtmss4w2NIM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
+  "projectFilePath": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Backspace_SD\\.nuget\\packages\\spectre.console\\0.54.0\\spectre.console.0.54.0.nupkg.sha512"
+    "C:\\Users\\Aidan\\.nuget\\packages\\spectre.console\\0.54.0\\spectre.console.0.54.0.nupkg.sha512"
   ],
   "logs": []
 }
