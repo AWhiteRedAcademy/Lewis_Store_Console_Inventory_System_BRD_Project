@@ -27,12 +27,28 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
         public static (string Name, string Desc, int Qty, decimal Price) ItemAdd()
         {
-            ErrorStart:
-            Console.WriteLine("Selling Stock\n===============================================\n");
+        ErrorStart:
             Console.Clear();
-            Console.WriteLine("Item Add\t(*Cancel)\n====================\nItem Name: ");
-            string Name = Console.ReadLine();
 
+            var ItemAddPanel = new Panel("")
+                .Header("[lightgreen bold]ADD ITEM[/]", Justify.Center)
+                .RoundedBorder()
+                .BorderColor(Color.Grey)
+                .Padding(2, 1)
+                .Expand();
+                
+            AnsiConsole.Write(Align.Center(ItemAddPanel));
+
+            var NameP = new TextPrompt<string>("[yellow]Name Of Item: [/]")
+                .PromptStyle(new Style(Color.Yellow));
+            var DescP = new TextPrompt<string>("[yellow]Description: [/]")
+                .PromptStyle(new Style(Color.Yellow));
+            var QtyP = new TextPrompt<string>("[yellow]Qty: [/]")
+                .PromptStyle(new Style(Color.Yellow));
+            var PriceP = new TextPrompt<string>("[yellow]Price Excl.VAT: [/]")
+                .PromptStyle(new Style(Color.Yellow));
+
+            string Name = AnsiConsole.Prompt(NameP);
             if (Name.ToUpper() == "CANCEL")
             {
                 return ("", "", 0, 0);
@@ -45,9 +61,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 goto ErrorStart;
 
             }
-
-            Console.WriteLine("Item Description: ");
-            string Desc = Console.ReadLine();
+          
+            string Desc = AnsiConsole.Prompt(DescP);
             if (Desc == "")
             {
                 Console.WriteLine("Error Invalid Description Please Try Again");
@@ -56,16 +71,14 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             }
 
-            Console.WriteLine("Item Quantity: ");
-            if (!int.TryParse(Console.ReadLine(), out int Qty) || Qty < 0)
+            if (!int.TryParse(AnsiConsole.Prompt(QtyP), out int Qty) || Qty < 0)
             {
                 Console.WriteLine("Error Invalid Quantity, Has to Be A Valid Number And Cannot Be Less Than 0");
                 Console.ReadKey();
                 goto ErrorStart;
             }
-
-            Console.WriteLine("Item Price 'Excl.VAT': ");
-            string sPrice = Console.ReadLine();
+    
+            string sPrice = AnsiConsole.Prompt(PriceP);
 
             if (sPrice.Contains("."))
             {
@@ -80,8 +93,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 goto ErrorStart;
     
             }
-
-            Console.WriteLine("Item Added Successfully");
+          
+            AnsiConsole.MarkupLine("\n[green]Item Added Successfully[/]");
             Console.ReadKey();
             Console.Clear();
 
@@ -94,49 +107,62 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             //{ for (int i = 0; i < itemCount; i++)
             //{
 
-              //  Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
-              //      $"===============================================\n");
+            //  Console.WriteLine($"{i}. |Item Name: {ItemN[i]}|\t|Quantity: {ItemQ[i]}|\t|Price Per Item'Excl.VAT': R{ItemP[i]}|\n|Description: {ItemD[i]}|\n" +
+            //      $"===============================================\n");
 
-            //}    
+            //}       
 
-            var DisplayTable = new Table();
+            var DisplayTable = new Table()
+                .RoundedBorder()
+                .BorderColor(Color.Grey)
+                .ShowRowSeparators()
+                .Expand();
 
-            DisplayTable.AddColumn("Item");
-            DisplayTable.AddColumn("Description");
-            DisplayTable.AddColumns("Qty");
-            DisplayTable.AddColumns("Price.Excl VAT");
+
+            DisplayTable.AddColumn("[yellow]Item[/]");
+            DisplayTable.AddColumn("[yellow]Description[/]");
+            DisplayTable.AddColumns("[yellow]Qty[/]");
+            DisplayTable.AddColumns("[yellow]Price.Excl VAT[/]");
 
             for (int item = 0; item < itemCount; item++)
             {
                 DisplayTable.AddRow(ItemN[item], ItemD[item], ItemQ[item].ToString(), "R" + ItemP[item].ToString());
             }
 
-            AnsiConsole.Write(DisplayTable);
+            var DisplayPanel = new Panel(DisplayTable)
+                .Header("[lightgreen bold]View Product Stock[/]", Justify.Center)
+                .RoundedBorder()
+                .BorderColor(Color.Blue)
+                .Padding(2, 1);
+            AnsiConsole.Write(Align.Center(DisplayPanel));
         }
 
         public static (decimal FinalAmount, decimal FinalAmountVAT, int ItemIndex, int Qty) SellItem(string[] ItemN, string[] ItemD, int[] ItemQ, decimal[] ItemP, int itemCount)
         {
-            string ItemName;
+            string? ItemName;
 
             decimal FinalAmount = 0;
             decimal FinalAmountVAT = 0;
             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
 
-            Console.WriteLine("Enter Item Name To Add To Cart, Item Name: ");
+            Console.WriteLine("Type 'Cancel' if you wish to not add to cart\nEnter Item Name To Add To Cart, Item Name: ");
             ItemName = Console.ReadLine();
-            if (ItemName == "") { Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0); }
+
+            if (ItemName.ToUpper() == "CANCEL") { Console.WriteLine("CANCELLING"); Thread.Sleep(3); return (1, 0, 0, 0); }
+
+            if (ItemName == "" || ItemName == null) { Console.WriteLine("Error Item Does Not Exist"); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0); }
 
 
             int? ItemIndex = ItemSearch(ItemName, ItemN);
-            if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0); }       
+            if (ItemIndex == null) { Console.WriteLine("Error Item Does Not Exist"); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0); }       
 
             Console.WriteLine("How Many Do You Wish To Buy?: ");
             if (!int.TryParse(Console.ReadLine(), out int Qty))
             {
-                Console.WriteLine("Error Item Does Not Exist"); return (0, 0, 0, 0);
+                Console.WriteLine("Error Item Does Not Exist"); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0);
             }else if (Qty > ItemQ[ItemIndex.Value])
             {
-                Console.WriteLine("Warning you cannot buy more than whats available in stock."); return (0, 0, 0, 0);
+                Console.WriteLine("Warning you cannot buy more than whats available in stock."); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0);
             }
  
 
@@ -168,9 +194,28 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             while (Continue)
             {
             MenuStart:
+                var MainScreen = new Table()
+                .RoundedBorder()
+                .BorderColor(Color.Grey)
+                .Title("[lightgreen bold] The Lewis Store Inventory Management System[/]");
 
-                Console.WriteLine("The Lewis Store Inventory Management System\n-------------------------------------------------");
-                Console.WriteLine("Please select an option:\n1. Add Item\n2. View Inventory\n3. Sell Items\n4. Exit");
+                MainScreen.AddColumn("Please select an option:");
+
+
+                MainScreen.AddRow(
+                    new Text("1. Add Item", new Style(foreground: Color.Yellow,decoration: Decoration.Bold))
+                );
+                MainScreen.AddRow(
+                   new Text("2. View Inventory", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
+                );
+                MainScreen.AddRow(
+                   new Text("3. Sell Items", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
+                );
+                MainScreen.AddRow(
+                   new Text("4. Exit", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
+                );
+
+                AnsiConsole.Write(Align.Center(MainScreen));
 
                 if (!int.TryParse(Console.ReadLine(), out int MenuChoice) || MenuChoice > 4)
                 {
@@ -209,7 +254,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     case 2:
                         {
                             Console.Clear();
-                            Console.WriteLine("View Product Stock\n===============================================\n");
                             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
 
                             Console.WriteLine("Press Any Key To Continue");
@@ -229,22 +273,34 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                             List<int> ItemsOrdered = new List<int>(itemCount);
 
-                            var CheckTable = new Table();
 
-                            CheckTable.AddColumn("Item");
-                            CheckTable.AddColumns("Qty");
-                            CheckTable.AddColumns("Price.Excl VAT");
+                            var CheckTable = new Table()
+                                .RoundedBorder()
+                                .BorderColor(Color.Grey)
+                                .Title("[yellow bold] Checkout Items[/]")
+                                .Expand();
+
+
+                            CheckTable.AddColumn("Item", col => col.Centered());
+                            CheckTable.AddColumn("Qty", col => col.Centered());
+                            CheckTable.AddColumn("Price.Excl VAT", col => col.Centered());
+
 
                             do
                             {
+                            ErrorStart:
                                 Console.Clear();
-                                Console.WriteLine("Selling Stock\n===============================================\n");
+                                AnsiConsole.Write(new Rule("[blue]Selling Stock[/]") { Justification = Justify.Center });
 
                                 var SellItems = SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+                                if (SellItems.ToString() == "(0, 0, 0, 0)") { goto ErrorStart; } //Error Code 0000
+                                else if (SellItems.ToString() == "(1, 0, 0, 0)") { goto CancelItem; } //Cancelled Item
+
+                                SellItems.ItemIndex += 1;
 
                                 if (!ItemsOrdered.Contains(SellItems.ItemIndex))
                                 {
-
+                                    SellItems.ItemIndex -= 1;
                                     ItemQ[SellItems.ItemIndex] -= SellItems.Qty;
 
                                     TotalPrice += SellItems.FinalAmount;
@@ -252,23 +308,49 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                                     CheckTable.AddRow(ItemN[SellItems.ItemIndex], SellItems.Qty.ToString(), "R" + ItemP[SellItems.ItemIndex].ToString());
 
-                                    ItemsOrdered.Add(SellItems.ItemIndex);
+                                    ItemsOrdered.Add(SellItems.ItemIndex += 1 );
 
                                 }
-                                else { Console.WriteLine("Already have this item in checkout, Type 'Checkout' to Checkout");}
+                                else { Console.WriteLine("Already have this item in Cart");}
+
+                            CancelItem:
+                                Console.WriteLine("Type 'Checkout' to Checkout Or Press Any Key To Add Another Item");
 
                             } while (Console.ReadLine().ToUpper() != "CHECKOUT");
 
 
+
                             Console.Clear();
-                            Console.WriteLine("CHECKOUT\n===============================================\n");
 
-                            CheckTable.AddRow("","","");
-                            CheckTable.AddRow("","Total Excl.VAT: ", "R"+TotalPrice.ToString());
-                            CheckTable.AddRow("","Total Incl.VAT(15%): ", "R"+TotalPriceVAT.ToString());
+                            var CheckItem = new Panel(CheckTable)
+                                .Border(BoxBorder.None)
+                                .Header("CHECKOUT", Justify.Center);
 
-                            AnsiConsole.Write(CheckTable);
-                            
+                            var Totals = new Table()
+                                .BorderColor(Color.Grey)
+                                .Expand()
+                                .AddColumn("")
+                                .AddColumn("");
+
+
+                            Totals.Columns[0].Header = new Text("Total [Excl.VAT]", new Style(decoration: Decoration.Bold)).RightJustified();
+                            Totals.Columns[1].Header = new Text("R" + TotalPrice.ToString(), new Style(Color.Green, decoration: Decoration.Bold)).RightJustified();
+
+                            Totals.Columns[0].Footer = new Text("Total [Incl.VAT]", new Style(decoration: Decoration.Bold)).RightJustified();
+                            Totals.Columns[1].Footer = new Text("R" + TotalPriceVAT.ToString(), new Style(Color.Green, decoration: Decoration.Bold)).RightJustified();
+
+                            var CheckTotal = new Panel(Totals)
+                                .Border(BoxBorder.None)
+                                .Expand();
+
+                            //CheckTable.AddRow("","Total [Incl.VAT(15%)]: ", "R"+TotalPriceVAT.ToString());
+
+                            AnsiConsole.Write(Align.Center(CheckItem));
+
+                            AnsiConsole.Write(Align.Center(CheckTotal));
+
+                            Console.ReadKey();
+                            Console.Clear();
                             break;
                         }
                     case 4:
