@@ -324,7 +324,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                             var CheckItem = new Panel(CheckTable)
                                 .Border(BoxBorder.None)
-                                .Header("CHECKOUT", Justify.Center);
+                                .Header("CHECKOUT", Justify.Center)
+                                .Expand();
 
                             var Totals = new Table()
                                 .BorderColor(Color.Grey)
