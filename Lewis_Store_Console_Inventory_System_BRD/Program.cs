@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using Spectre.Console;
 
@@ -267,12 +268,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             TotalPrice = 0; TotalPriceVAT = 0;
 
                             Console.Clear();
-                            
-                            Console.WriteLine("Selling Stock\n===============================================\nAdd Order To Cart? Y/N: ");
-                            if (Console.ReadLine().ToUpper() == "N") { Console.Clear(); break; }
 
                             List<int> ItemsOrdered = new List<int>(itemCount);
-
 
                             var CheckTable = new Table()
                                 .RoundedBorder()
@@ -280,11 +277,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 .Title("[yellow bold] Checkout Items[/]")
                                 .Expand();
 
-
                             CheckTable.AddColumn("Item", col => col.Centered());
                             CheckTable.AddColumn("Qty", col => col.Centered());
-                            CheckTable.AddColumn("Price.Excl VAT", col => col.Centered());
-
+                            CheckTable.AddColumn("Price.Excl VAT", col => col.RightAligned());
 
                             do
                             {
@@ -318,8 +313,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                             } while (Console.ReadLine().ToUpper() != "CHECKOUT");
 
-
-
                             Console.Clear();
 
                             var CheckItem = new Panel(CheckTable)
@@ -344,11 +337,18 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 .Border(BoxBorder.None)
                                 .Expand();
 
+                            var CheckLayout = new Layout("Root")
+                                .SplitRows(
+                                    new Layout("ItemDisplay")
+                                    .Size(20),
+                                    new Layout("Totals"));
+
+                            CheckLayout["ItemDisplay"].Update(CheckItem);
+                            CheckLayout["Totals"].Update(CheckTotal);
+
                             //CheckTable.AddRow("","Total [Incl.VAT(15%)]: ", "R"+TotalPriceVAT.ToString());
 
-                            AnsiConsole.Write(Align.Center(CheckItem));
-
-                            AnsiConsole.Write(Align.Center(CheckTotal));
+                            AnsiConsole.Write(Align.Center(CheckLayout));
 
                             Console.ReadKey();
                             Console.Clear();
