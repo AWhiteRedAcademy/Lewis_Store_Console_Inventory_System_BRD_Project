@@ -149,7 +149,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             Console.WriteLine("Type 'Cancel' if you wish to not add to cart\nEnter Item Name To Add To Cart, Item Name: ");
             ItemName = Console.ReadLine();
 
-            if (ItemName.ToUpper() == "CANCEL") { Console.WriteLine("CANCELLING"); Thread.Sleep(3); return (1, 0, 0, 0); }
+            if (ItemName.ToUpper() == "CANCEL") { Console.WriteLine("CANCELLING"); return (1, 0, 0, 0); }
 
             if (ItemName == "" || ItemName == null) { Console.WriteLine("Error Item Does Not Exist"); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0); }
 
