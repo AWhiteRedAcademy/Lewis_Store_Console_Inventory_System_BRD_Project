@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using Spectre.Console;
 
@@ -85,6 +86,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 sPrice = sPrice.Replace(".", ",");
             }
 
+
             if (!decimal.TryParse(sPrice, out decimal Price) || Price < 0)
             {
                 
@@ -126,7 +128,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             for (int item = 0; item < itemCount; item++)
             {
-                DisplayTable.AddRow(ItemN[item], ItemD[item], ItemQ[item].ToString(), "R" + ItemP[item].ToString());
+                DisplayTable.AddRow(ItemN[item], ItemD[item], ItemQ[item].ToString(), "R" + ItemP[item].ToString("0.00"));
             }
 
             var DisplayPanel = new Panel(DisplayTable)
@@ -148,7 +150,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             Console.WriteLine("Type 'Cancel' if you wish to not add to cart\nEnter Item Name To Add To Cart, Item Name: ");
             ItemName = Console.ReadLine();
 
-            if (ItemName.ToUpper() == "CANCEL") { Console.WriteLine("CANCELLING"); Thread.Sleep(3); return (1, 0, 0, 0); }
+            if (ItemName.ToUpper() == "CANCEL") { Console.WriteLine("CANCELLING"); return (1, 0, 0, 0); }
 
             if (ItemName == "" || ItemName == null) { Console.WriteLine("Error Item Does Not Exist"); Console.ReadKey(); Console.Clear(); return (0, 0, 0, 0); }
 
@@ -264,15 +266,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         }
                     case 3:
                         {
-                            TotalPrice = 0; TotalPriceVAT = 0;
+                            TotalPrice = 0.00m; TotalPriceVAT = 0.00m;
 
                             Console.Clear();
-                            
-                            Console.WriteLine("Selling Stock\n===============================================\nAdd Order To Cart? Y/N: ");
-                            if (Console.ReadLine().ToUpper() == "N") { Console.Clear(); break; }
 
                             List<int> ItemsOrdered = new List<int>(itemCount);
-
 
                             var CheckTable = new Table()
                                 .RoundedBorder()
@@ -280,11 +278,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 .Title("[yellow bold] Checkout Items[/]")
                                 .Expand();
 
-
-                            CheckTable.AddColumn("Item", col => col.Centered());
-                            CheckTable.AddColumn("Qty", col => col.Centered());
-                            CheckTable.AddColumn("Price.Excl VAT", col => col.Centered());
-
+                            CheckTable.AddColumn("[yellow bold] Item[/]", col => col.Centered());
+                            CheckTable.AddColumn("[yellow bold] Qty[/]", col => col.Centered());
+                            CheckTable.AddColumn("[yellow bold] Price.Excl VAT[/] ", col => col.RightAligned());
 
                             do
                             {
@@ -306,7 +302,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                     TotalPrice += SellItems.FinalAmount;
                                     TotalPriceVAT += SellItems.FinalAmountVAT;
 
-                                    CheckTable.AddRow(ItemN[SellItems.ItemIndex], SellItems.Qty.ToString(), "R" + ItemP[SellItems.ItemIndex].ToString());
+                                    CheckTable.AddRow(ItemN[SellItems.ItemIndex], SellItems.Qty.ToString(), "R" + ItemP[SellItems.ItemIndex].ToString("0.00"));
 
                                     ItemsOrdered.Add(SellItems.ItemIndex += 1 );
 
@@ -314,11 +310,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 else { Console.WriteLine("Already have this item in Cart");}
 
                             CancelItem:
-                                Console.WriteLine("Type 'Checkout' to Checkout Or Press Any Key To Add Another Item");
+                                Console.WriteLine("\nType 'Checkout' to Checkout Or Press Any Key To Add Another Item");
 
                             } while (Console.ReadLine().ToUpper() != "CHECKOUT");
-
-
 
                             Console.Clear();
 
@@ -344,11 +338,18 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 .Border(BoxBorder.None)
                                 .Expand();
 
+                            var CheckLayout = new Layout("Root")
+                                .SplitRows(
+                                    new Layout("ItemDisplay")
+                                    .Size(20),
+                                    new Layout("Totals"));
+
+                            CheckLayout["ItemDisplay"].Update(CheckItem);
+                            CheckLayout["Totals"].Update(CheckTotal);
+
                             //CheckTable.AddRow("","Total [Incl.VAT(15%)]: ", "R"+TotalPriceVAT.ToString());
 
-                            AnsiConsole.Write(Align.Center(CheckItem));
-
-                            AnsiConsole.Write(Align.Center(CheckTotal));
+                            AnsiConsole.Write(Align.Center(CheckLayout));
 
                             Console.ReadKey();
                             Console.Clear();
