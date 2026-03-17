@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Lewis_Store_Console_Inventory_System_BRD"
+    "\\Lewis_Store_Console_Inventory_System_BRD",
+    "\\Lewis_Store_Console_Inventory_System_BRD\\obj"
   ],
+  "SelectedNode": "\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
