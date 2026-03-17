@@ -34,3 +34,9 @@ C:\Users\Aidan\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_Sys
 C:\Users\Aidan\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\obj\Debug\net10.0\Lewis_St.F3D35785.Up2Date
 C:\Users\Aidan\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\obj\Debug\net10.0\Lewis_Store_Console_Inventory_System_BRD.genruntimeconfig.cache
 C:\Users\Aidan\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\obj\Debug\net10.0\ref\Lewis_Store_Console_Inventory_System_BRD.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\System.Data.SqlClient.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\runtimes\win-arm64\native\sni.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\runtimes\win-x64\native\sni.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\runtimes\win-x86\native\sni.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\runtimes\unix\lib\net8.0\System.Data.SqlClient.dll
+C:\Users\Backspace_SD\OneDrive - redAcademy (Pty) Ltd\Lewis_Store_Console_Inventory_System_BRD\Lewis_Store_Console_Inventory_System_BRD\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Data.SqlClient.dll
