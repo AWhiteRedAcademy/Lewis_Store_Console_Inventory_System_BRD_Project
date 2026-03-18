@@ -143,15 +143,9 @@ public class ItemAdd
 
         connection.Open();
 
-        SqlCommand command = new SqlCommand("SELECT COUNT(ItemID) FROM Item",connection);
-        command.ExecuteNonQuery();
-        int ItemID = int.Parse(command.ExecuteNonQuery().ToString());
-        ItemID++;
+        string query = $"INSERT INTO Item (Name,Description,Quantity,Price) VALUES (@Name,@Desc,@Qty,@Price)";
+        SqlCommand command = new SqlCommand(query,connection);
 
-        string query = $"INSERT INTO Item (ItemID,Name,Description,Quantity,Price) VALUES (@ItemID,@Name,@Desc,@Qty,@Price)";
-        command = new SqlCommand(query,connection);
-
-        command.Parameters.AddWithValue("@ItemID", ItemID);
         command.Parameters.AddWithValue("@Name", Name);
         command.Parameters.AddWithValue("@Desc", Desc);
         command.Parameters.AddWithValue("@Qty", Qty);
