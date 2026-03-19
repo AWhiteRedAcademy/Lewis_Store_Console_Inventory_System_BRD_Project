@@ -1,7 +1,7 @@
 [README.md](https://github.com/user-attachments/files/26063240/README.md)
 # Lewis Store Console Inventory System
 
-## Week 4 User Manual / README
+## User Manual / README
 
 ### 1\. Project Overview
 
