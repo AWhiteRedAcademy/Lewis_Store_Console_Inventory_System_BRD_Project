@@ -1,0 +1,121 @@
+﻿using Spectre.Console;
+using System;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO.Pipelines;
+using System.Xml.Linq;
+
+public class Product
+{   
+
+    private int ProductID { get; set; }
+    private string Name     { get { return Name; } set { Name = value; } }
+    private string Description     { get { return Description; } set { Description = value; } }
+    private int Quantity    { get { return Quantity; } 
+        set {
+            if (value > 0)
+            {
+                Quantity = value;
+            }
+            else { Console.WriteLine("ERROR CANNOT HAVE A QUANTITY BELOW 0"); }
+            } }
+    private decimal PriceExclVAT   { get { return PriceExclVAT; } 
+        set {
+                if (value > 0)
+                {
+                    PriceExclVAT = value;
+                }
+                else { Console.WriteLine("ERROR CANNOT HAVE A PRICE OF ITEM BELOW 0"); }
+            } }
+
+
+    public Product(int productid, string name, string desc, int qty, decimal price)
+	{
+        ProductID = productid;
+        Name = name;
+        Description = desc;
+        Quantity = qty;
+        PriceExclVAT = price;
+	}
+
+    public void AddProduct() 
+    {
+        DatabaseManager Add = new DatabaseManager();
+        Add.AddProduct(Name, Description, Quantity, PriceExclVAT);
+    }
+
+}
+
+public class Sale : Product
+{
+    private int SaleID { get; set; }
+    private int ProductID { get; set; }
+    private int QuantitySold { get; set; }
+    private decimal Subtotal { get; set; }
+    private decimal VatAmount { get; set; }
+    private decimal TotalAmount { get; set; }
+    private decimal SaleDate { get; set; }
+    public Sale(int productid, string name, string desc, int qty, decimal price) : base (productid, name, desc, qty, price)
+    {
+    
+    }
+}
+
+public class DatabaseManager
+{   
+    private SqlConnection Connection { get; }
+
+    public DatabaseManager()
+    {
+        try
+        {
+            string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;";
+            Connection = new SqlConnection(connectionstring);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Connection to Database Failed: " + ex.Message);
+            Console.ReadKey();
+        }
+    }
+
+    public void DisplayStock(Table DisplayTable)
+    {
+
+        Connection.Open();
+
+        SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
+        SqlDataReader reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
+        }
+
+        reader.Close();
+        Connection.Close();
+
+    }
+
+    public void AddProduct(string ProductName, string Description, int QuantityInStock, decimal PriceExcludingVAT) 
+    {
+        Connection.Open();
+
+        string query = $"INSERT INTO Products (ProductName,Description,QuantityInStock,PriceExcludingVAT) VALUES (@Name,@Desc,@Qty,@Price)";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@Name", ProductName);
+        command.Parameters.AddWithValue("@Desc", Description);
+        command.Parameters.AddWithValue("@Qty", QuantityInStock);
+        command.Parameters.AddWithValue("@Price", PriceExcludingVAT);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
+
+    }
+}
+
+
+
+
