@@ -49,6 +49,11 @@ public class Product
         Add.AddProduct(_Name, _Description, _Quantity, _PriceExclVAT);
     }
 
+    public void UpdateProduct()
+    {
+
+    }
+
 }
 
 public class Sale

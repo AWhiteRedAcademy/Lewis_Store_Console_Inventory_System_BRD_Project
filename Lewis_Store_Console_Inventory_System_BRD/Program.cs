@@ -172,52 +172,23 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             while (Continue)
             {
-            MenuStart:
-                var MainScreen = new Table()
-                .RoundedBorder()
-                .BorderColor(Color.Grey)
-                .Title("[lightgreen bold] The Lewis Store Inventory Management System[/]");
 
-                MainScreen.AddColumn("Please select an option:");
+                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("[lightgreen bold] The Lewis Store Inventory Management System[/]\n Please Select An Option")
+                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Exit")
+                .WrapAround());
+                AnsiConsole.Ask<string>("Enter Your Choice: ");
 
-
-                MainScreen.AddRow(
-                    new Text("1. Add Item", new Style(foreground: Color.Yellow,decoration: Decoration.Bold))
-                );
-                MainScreen.AddRow(
-                   new Text("2. View Inventory", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
-                );
-                MainScreen.AddRow(
-                   new Text("3. Sell Items", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
-                );
-                MainScreen.AddRow(
-                   new Text("4. Update Products", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
-                );
-                MainScreen.AddRow(
-                   new Text("5. Exit", new Style(foreground: Color.Yellow, decoration: Decoration.Bold))
-                );
-
-                AnsiConsole.Write(Align.Center(MainScreen));
-
-                if (!int.TryParse(Console.ReadLine(), out int MenuChoice) || MenuChoice > 4)
+                switch (Choice)
                 {
-                    Console.WriteLine("Invalid Character, Is Not A Integer or Out Of Bounds");
-                    Console.ReadKey();
-                    Console.Clear();
-                    goto MenuStart;
-                }
-
-                switch (MenuChoice)
-                {
-                    case 1:
+                    case "Add Item":
                         {
                             AddProduct();
                             Console.Clear();
-
                             break;
                         }
 
-                    case 2:
+                    case "View Stock":
                         {
                             Console.Clear();
 
@@ -229,7 +200,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                             break;
                         }
-                    case 3:
+                    case "Sell Items":
                         {
                             Console.Clear();
 
@@ -239,11 +210,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             Console.Clear();
                             break;
                         }
-                    case 4: 
+                    case "Update Products": 
                         {
                             break;
                         }
-                    case 5:
+                    case "Exit":
                         {
                             Console.Clear();
                             Console.WriteLine("Exiting now");
