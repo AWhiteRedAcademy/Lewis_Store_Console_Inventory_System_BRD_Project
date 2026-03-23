@@ -172,12 +172,12 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             while (Continue)
             {
+                AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
 
                 var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .Title("[lightgreen bold] The Lewis Store Inventory Management System[/]\n Please Select An Option")
+                .Title("\nPlease Select An Option")
                 .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Exit")
                 .WrapAround());
-                AnsiConsole.Ask<string>("Enter Your Choice: ");
 
                 switch (Choice)
                 {
