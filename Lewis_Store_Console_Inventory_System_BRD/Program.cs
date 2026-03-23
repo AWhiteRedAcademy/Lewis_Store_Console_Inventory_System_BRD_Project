@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using Spectre.Console;
+using Spectre.Console.Extensions;
 
 namespace Lewis_Store_Console_Inventory_System_BRD
 {
@@ -96,7 +97,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD
     
             }
           
-            AnsiConsole.MarkupLine("\n[green]Item Added Successfully[/]");
+            AnsiConsole.Write(new Rule("\n[green underline]Item Added Successfully[/]") 
+            {
+                Border = BoxBorder.Ascii
+            });
+
             Console.ReadKey();
             Console.Clear();
 
