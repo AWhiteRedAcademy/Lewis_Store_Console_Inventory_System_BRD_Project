@@ -266,14 +266,14 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 AnsiConsole.Write(new Rule("[blue]Selling Stock[/]") { Justification = Justify.Center });
 
                                 var SellItems = SellItem(ItemN, ItemD, ItemQ, ItemP, itemCount);
+
                                 if (SellItems.ToString() == "(0, 0, 0, 0)") { goto ErrorStart; } //Error Code 0000
                                 else if (SellItems.ToString() == "(1, 0, 0, 0)") { goto CancelItem; } //Cancelled Item
 
-                                SellItems.ItemIndex += 1;
 
-                                if (!ItemsOrdered.Contains(SellItems.ItemIndex))
+                                if (!ItemsOrdered.Contains(SellItems.ItemIndex + 1))
                                 {
-                                    SellItems.ItemIndex -= 1;
+
                                     ItemQ[SellItems.ItemIndex] -= SellItems.Qty;
 
                                     TotalPrice += SellItems.FinalAmount;
@@ -281,7 +281,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                                     CheckTable.AddRow(ItemN[SellItems.ItemIndex], SellItems.Qty.ToString(), "R" + ItemP[SellItems.ItemIndex].ToString("0.00"));
 
-                                    ItemsOrdered.Add(SellItems.ItemIndex += 1);
+                                    ItemsOrdered.Add(SellItems.ItemIndex + 1);
                                 }
                                 else { Console.WriteLine("Already have this item in Cart"); }
 
