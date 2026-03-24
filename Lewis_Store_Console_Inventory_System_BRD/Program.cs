@@ -143,14 +143,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             decimal FinalAmount = 0;
             decimal FinalAmountVAT = 0;
             DisplayStock(ItemN, ItemD, ItemQ, ItemP, itemCount);
-
-            
-
+     
             ItemName = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("Select Item Name To Add To Cart")
                 .PageSize(10)
                 .EnableSearch()
                 .SearchPlaceholderText("Type to search Items")
+                .HighlightStyle(new Style(Color.Green, Color.FromHex("#212121"), decoration: Decoration.Bold))
                 .AddChoices("Cancel")
                 .AddChoices(ItemN.Where(item => !string.IsNullOrWhiteSpace(item)).ToArray()));
 
@@ -200,14 +199,17 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             while (Continue)
             {
 
+                AnsiConsole.Write(new FigletText("Lewis Store").Centered().Color(Color.Green));
                 AnsiConsole.Write(new Rule("[lightgreen bold]The Lewis Store Inventory Management System[/]")
                 { Justification = Justify.Center,
                    Border = BoxBorder.Double });
 
                 var Menu = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("\n Please Select An Option")
+                .HighlightStyle(new Style(Color.Green, Color.FromHex("#212121"), decoration: Decoration.Bold))
                 .AddChoices("Add Item", "View Stock", "Sell Items", "Exit")
                 .WrapAround());
+
 
                 switch (Menu)
                 {
