@@ -162,6 +162,17 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
         }
 
+        public static void UpdateProduct() 
+        {
+            DisplayStock();
+
+            Console.WriteLine("Enter The ID Of The Product You Want To Update");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+
+
+        }
+
 
         static void Main(string[] args)
         {

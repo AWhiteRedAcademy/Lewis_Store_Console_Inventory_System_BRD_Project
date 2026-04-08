@@ -13,10 +13,10 @@ public class Product
     private int _Quantity;
     private decimal _PriceExclVAT;
 
-    private int ProductID { get { return _ProductID; } set { _ProductID = value; } }
-    private string Name     { get { return _Name; } set { _Name = value; } }
-    private string Description     { get { return _Description; } set { _Description = value; } }
-    private int Quantity    { get { return _Quantity; } 
+    public int ProductID { get { return _ProductID; } set { _ProductID = value; } }
+    public string Name     { get { return _Name; } set { _Name = value; } }
+    public string Description     { get { return _Description; } set { _Description = value; } }
+    public int Quantity    { get { return _Quantity; } 
         set {
             if (value > 0)
             {
@@ -40,7 +40,7 @@ public class Product
         Name = name;
         Description = desc;
         Quantity = qty;
-        PriceExclVAT = price;
+        PriceExclVAT = price; 
 	}
 
     public void AddProduct() 
@@ -51,7 +51,8 @@ public class Product
 
     public void UpdateProduct()
     {
-
+        DatabaseManager Update = new DatabaseManager();
+        Update.UpdateProduct(ProductID);
     }
 
 }
@@ -90,7 +91,7 @@ public class DatabaseManager
     {
         try
         {
-            string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;";
+            string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;"; 
             Connection = new SqlConnection(connectionstring);
         }
         catch (Exception ex)
@@ -135,6 +136,27 @@ public class DatabaseManager
 
         Connection.Close();
 
+    }
+
+    public void UpdateProduct(int id) 
+    {
+        Connection.Open();
+
+        string query = $"UPDATE Products SET QuantityInStock = @Qty WHERE ProductID = @ID";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        Console.WriteLine("Enter the ID of the product you want to update:");
+        id = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Enter the new quantity:");
+        int qty = Convert.ToInt32(Console.ReadLine());
+
+        command.Parameters.AddWithValue("@ID", id);
+        command.Parameters.AddWithValue("@Qty", qty);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
     }
 
     public void AddSale(int productid, int quantity, decimal subtotal, decimal vatamount, decimal totalamount, DateOnly saledate)
