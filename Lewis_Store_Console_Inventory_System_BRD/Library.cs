@@ -24,7 +24,7 @@ public class Product
             }
             else { Console.WriteLine("ERROR CANNOT HAVE A QUANTITY BELOW 0"); }
             } }
-    private decimal PriceExclVAT   { get { return _PriceExclVAT; } 
+    public decimal PriceExclVAT   { get { return _PriceExclVAT; } 
         set {
                 if (value > 0)
                 {
@@ -52,7 +52,7 @@ public class Product
     public void UpdateProduct()
     {
         DatabaseManager Update = new DatabaseManager();
-        Update.UpdateProduct(ProductID);
+        Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
     }
 
 }
@@ -101,22 +101,50 @@ public class DatabaseManager
         }
     }
 
-    public void DisplayStock(Table DisplayTable)
+    public string[] DisplayStock(Table DisplayTable)
     {
 
         Connection.Open();
 
-        SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
+        SqlCommand command = new SqlCommand("SELECT COUNT(DISTINCT ProductID) FROM Products", Connection);
         SqlDataReader reader = command.ExecuteReader();
+
+        string[] ProductList = new string[int.Parse(reader.ToString())];
+        int Count = 0;
+
+        command = new SqlCommand("SELECT * FROM Products", Connection);
+        reader = command.ExecuteReader();
 
         while (reader.Read())
         {
             DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
+            ProductList[Count] = reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
+            Count++;
         }
 
         reader.Close();
         Connection.Close();
 
+        return ProductList;
+
+    }
+
+    public Product PullProduct(int ItemID) 
+    {
+        Connection.Open();
+
+        SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
+
+        command.Parameters.AddWithValue("ItemID", ItemID);
+
+        SqlDataReader reader = command.ExecuteReader();
+
+        Product Item = new Product(ItemID, reader["Name"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), int.Parse(reader["PriceExcludingVAT"].ToString()));
+
+        reader.Close();
+        Connection.Close();
+
+        return Item;
     }
 
     public void AddProduct(string ProductName, string Description, int QuantityInStock, decimal PriceExcludingVAT) 
@@ -138,21 +166,18 @@ public class DatabaseManager
 
     }
 
-    public void UpdateProduct(int id) 
+    public void UpdateProduct(int id, string Name, string Description, int Quantity, decimal Price) 
     {
         Connection.Open();
 
-        string query = $"UPDATE Products SET QuantityInStock = @Qty WHERE ProductID = @ID";
+        string query = $"UPDATE Products SET ProductName = @Name, Description = @Description, QuantityInStock = @Qty, PriceExcludingVAT = @Price WHERE ProductID = @ID";
         SqlCommand command = new SqlCommand(query, Connection);
 
-        Console.WriteLine("Enter the ID of the product you want to update:");
-        id = Convert.ToInt32(Console.ReadLine());
-
-        Console.WriteLine("Enter the new quantity:");
-        int qty = Convert.ToInt32(Console.ReadLine());
-
         command.Parameters.AddWithValue("@ID", id);
-        command.Parameters.AddWithValue("@Qty", qty);
+        command.Parameters.AddWithValue("@Name", Name);
+        command.Parameters.AddWithValue("@Description", Description);
+        command.Parameters.AddWithValue("@Qty", Quantity);
+        command.Parameters.AddWithValue("@PriceExcludingVAT", Price);
 
         command.ExecuteNonQuery();
 
