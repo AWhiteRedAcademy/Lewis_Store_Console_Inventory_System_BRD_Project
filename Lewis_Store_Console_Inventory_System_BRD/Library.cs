@@ -1,9 +1,4 @@
-﻿using Spectre.Console;
-using System;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IO.Pipelines;
-using System.Xml.Linq;
+﻿using Spectre.Console; using System; using System.Data.SqlClient; using System.Diagnostics; using System.IO.Pipelines; using System.Xml.Linq;
 
 public class Product
 {
@@ -13,10 +8,10 @@ public class Product
     private int _Quantity;
     private decimal _PriceExclVAT;
 
-    public int ProductID { get { return _ProductID; } set { _ProductID = value; } }
-    public string Name     { get { return _Name; } set { _Name = value; } }
-    public string Description     { get { return _Description; } set { _Description = value; } }
-    public int Quantity    { get { return _Quantity; } 
+    public int ProductID            { get { return _ProductID; } set { _ProductID = value; } }
+    public string Name              { get { return _Name; } set { _Name = value; } }
+    public string Description       { get { return _Description; } set { _Description = value; } }
+    public int Quantity             { get { return _Quantity; } 
         set {
             if (value > 0)
             {
@@ -24,7 +19,7 @@ public class Product
             }
             else { Console.WriteLine("ERROR CANNOT HAVE A QUANTITY BELOW 0"); }
             } }
-    public decimal PriceExclVAT   { get { return _PriceExclVAT; } 
+    public decimal PriceExclVAT     { get { return _PriceExclVAT; } 
         set {
                 if (value > 0)
                 {
@@ -51,6 +46,8 @@ public class Product
 
     public void UpdateProduct()
     {
+
+
         DatabaseManager Update = new DatabaseManager();
         Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
     }
@@ -106,14 +103,11 @@ public class DatabaseManager
 
         Connection.Open();
 
-        SqlCommand command = new SqlCommand("SELECT COUNT(DISTINCT ProductID) FROM Products", Connection);
-        SqlDataReader reader = command.ExecuteReader();
-
-        string[] ProductList = new string[int.Parse(reader.ToString())];
+        string[] ProductList = new string[100];
         int Count = 0;
 
-        command = new SqlCommand("SELECT * FROM Products", Connection);
-        reader = command.ExecuteReader();
+        SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
+        SqlDataReader reader = command.ExecuteReader();
 
         while (reader.Read())
         {
@@ -221,7 +215,3 @@ public class DatabaseManager
         Connection.Close();
     }
 }
-
-
-
-

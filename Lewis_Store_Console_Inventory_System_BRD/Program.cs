@@ -11,7 +11,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
     internal class Program
     {
-        public static void DisplayStock()
+        public static string[] DisplayStock()
         {
             var DisplayTable = new Table()
                 .RoundedBorder()
@@ -25,7 +25,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             DisplayTable.AddColumns("[yellow]Price.Excl VAT[/]");
 
             DatabaseManager display = new DatabaseManager();
-            display.DisplayStock(DisplayTable);
+            var ProductList = display.DisplayStock(DisplayTable);
 
             var DisplayPanel = new Panel(DisplayTable)
                 .Header("[lightgreen bold]View Product Stock[/]", Justify.Center)
@@ -33,7 +33,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 .BorderColor(Color.Blue)
                 .Padding(2, 1);
             AnsiConsole.Write(Align.Center(DisplayPanel));
-
+        
+            return ProductList;
         }
 
         public static void AddProduct() 
@@ -164,11 +165,30 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
         public static void UpdateProduct() 
         {
-            DisplayStock();
+            var ProductList = DisplayStock();
 
-            Console.WriteLine("Enter The ID Of The Product You Want To Update");
-            int id = Convert.ToInt32(Console.ReadLine());
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nPlease Select A Product To Update")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
+                .WrapAround());
 
+            if (Choice.Equals("[red]Cancel[/]")) {                
+                Console.Clear();
+                return;
+            }
+            else 
+            {
+                string ProductID = Choice.Remove(Choice.IndexOf(")"));
+                
+                DatabaseManager Pull = new DatabaseManager();
+                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
+                
+                CurrentItem.UpdateProduct();
+            }
 
 
         }
@@ -223,6 +243,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         }
                     case "Update Products": 
                         {
+                            UpdateProduct(); 
+                            Console.Clear();
                             break;
                         }
                     case "Exit":
