@@ -46,10 +46,67 @@ public class Product
 
     public void UpdateProduct()
     {
+        Console.Clear();
 
+        Table UpdateTable = new Table()
+            .RoundedBorder()
+            .BorderColor(Color.Grey)
+            .Title("[yellow bold] Update Product Details[/]");
+
+        UpdateTable.AddColumn("Product ID");
+        UpdateTable.AddColumn("Product Name");
+        UpdateTable.AddColumn("Description");
+        UpdateTable.AddColumn("Quantity");
+        UpdateTable.AddColumn("Price Excl VAT");
+
+        UpdateTable.AddRow(ProductID.ToString(), Name, Description, Quantity.ToString(), "R" + PriceExclVAT.ToString());
+
+        AnsiConsole.Write(Align.Center(UpdateTable));
+
+        var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nPlease Select A Product To Update")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]","Product Name","Description","Quantity","Price Excl.VAT")
+                .WrapAround());
+
+            switch (Choice) 
+            {
+                case "[red]Cancel[/]":
+                    {
+                        Console.Clear();
+                        return;
+                    }
+                case "Product Name":
+                    {
+                        string UpdateName = AnsiConsole.Prompt(new TextPrompt<string>("[red](WARNING DO NOT USE THIS TO REPLACE/ADD NEW PRODUCTS)[/]\nEnter New Product Name:"));                
+                        break;
+                    }
+
+                case "Description":
+                    {
+                        string UpdateDescription = AnsiConsole.Prompt(new TextPrompt<string>("Enter New Product Description:"));
+                        break;
+                    }
+                case "Quantity":
+                    {
+                        int UpdateQuantity = AnsiConsole.Prompt(new TextPrompt<int>("Enter New Product Quantity:")
+                            .Validate(qty => qty > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Quantity must be greater than 0[/]")));
+                        break;
+                    }
+                case "Price Excl.VAT":
+                    {
+                        decimal UpdatePrice = AnsiConsole.Prompt(new TextPrompt<decimal>("Enter New Product Price:")
+                            .Validate(price => price > 0 ? ValidationResult.Success() : ValidationResult.Error("[red]Price must be greater than 0[/]")));
+                        break;
+                    }
+            }
 
         DatabaseManager Update = new DatabaseManager();
         Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
+
+        AnsiConsole.WriteLine("[green]Product Updated Successfully![/]");
     }
 
 }
@@ -129,11 +186,14 @@ public class DatabaseManager
 
         SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
 
-        command.Parameters.AddWithValue("ItemID", ItemID);
+        command.Parameters.AddWithValue("ID", ItemID);
 
         SqlDataReader reader = command.ExecuteReader();
+        reader.Read();
 
-        Product Item = new Product(ItemID, reader["Name"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), int.Parse(reader["PriceExcludingVAT"].ToString()));
+        Console.WriteLine(reader["ProductID"].ToString() + reader["ProductName"].ToString() + reader["Description"].ToString() + reader["QuantityInStock"].ToString() + reader["PriceExcludingVAT"].ToString());
+
+        Product Item = new Product(ItemID, reader["ProductName"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), decimal.Parse(reader["PriceExcludingVAT"].ToString()));
 
         reader.Close();
         Connection.Close();
@@ -171,7 +231,7 @@ public class DatabaseManager
         command.Parameters.AddWithValue("@Name", Name);
         command.Parameters.AddWithValue("@Description", Description);
         command.Parameters.AddWithValue("@Qty", Quantity);
-        command.Parameters.AddWithValue("@PriceExcludingVAT", Price);
+        command.Parameters.AddWithValue("@Price", Price);
 
         command.ExecuteNonQuery();
 
