@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Channels;
 using Spectre.Console;
 using System.Data.SqlClient;
+using System.ComponentModel.Design;
 
 
 namespace Lewis_Store_Console_Inventory_System_BRD
@@ -11,33 +12,52 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
     internal class Program
     {
-        public static string[] DisplayStock()
+        public static (string[] ProductList, Table DisplayTable, Panel StockWarning) DisplayLoad()
         {
             var DisplayTable = new Table()
                 .RoundedBorder()
                 .BorderColor(Color.Grey)
-                .ShowRowSeparators()
-                .Expand();
+                .ShowRowSeparators();
 
             DisplayTable.AddColumn("[yellow]Item[/]");
             DisplayTable.AddColumn("[yellow]Description[/]");
             DisplayTable.AddColumns("[yellow]Qty[/]");
             DisplayTable.AddColumns("[yellow]Price.Excl VAT[/]");
 
+            var StockWarning = new Panel("[red bold]WARNING: LOW STOCK![/]")
+                .Header("[yellow bold]Stock Warning[/]", Justify.Center)
+                .RoundedBorder()
+                .BorderColor(Color.Red)
+                .Padding(1, 0);
+
             DatabaseManager display = new DatabaseManager();
-            var ProductList = display.DisplayStock(DisplayTable);
+            var ProductList = display.DisplayStock(DisplayTable, StockWarning);
+
+            return (ProductList, DisplayTable, StockWarning);
+        }
+
+        public static (Columns DisplayFormat, Panel DisplayPanel) DisplayFormat()
+        {
+            var (ProductList, DisplayTable, StockWarning) = DisplayLoad();
 
             var DisplayPanel = new Panel(DisplayTable)
                 .Header("[lightgreen bold]View Product Stock[/]", Justify.Center)
                 .RoundedBorder()
                 .BorderColor(Color.Blue)
                 .Padding(2, 1);
-            AnsiConsole.Write(Align.Center(DisplayPanel));
-        
-            return ProductList;
+
+            var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+                {
+                DisplayPanel,
+                StockWarning
+                });
+
+            return (DisplayLayout, DisplayPanel);
         }
 
-        public static void AddProduct() 
+
+
+        public static void AddProduct()
         {
         ErrorStart:
 
@@ -103,7 +123,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             }
 
-            Product Add = new Product(0, Name.ToString(), Desc.ToString(), Qty,Price);
+            Product Add = new Product(0, Name.ToString(), Desc.ToString(), Qty, Price);
             Add.AddProduct();
 
             AnsiConsole.MarkupLine("\n[green]Item Added Successfully[/]");
@@ -111,61 +131,100 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             Console.Clear();
         }
 
-        public static void SellItem() 
+        public static void SellItemMenu() 
         {
+            Panel SellItems = DisplayFormat().DisplayPanel;
 
-            var CheckTable = new Table()
+            Table Cart = new Table()
                 .RoundedBorder()
                 .BorderColor(Color.Grey)
-                .Title("[yellow bold] Checkout Items[/]")
                 .Expand();
 
+            Cart.AddColumn("[yellow]Items[/]", col => col.Centered());
 
-            CheckTable.AddColumn("Item", col => col.Centered());
-            CheckTable.AddColumn("Qty", col => col.Centered());
-            CheckTable.AddColumn("Price.Excl VAT", col => col.Centered());
+            Panel CartPanel = new Panel(Cart)
+                .Header("[lightgreen bold]Cart[/]", Justify.Center)
+                .RoundedBorder()
+                .BorderColor(Color.Blue)
+                .Padding(2, 1);
 
-            do 
-            { 
-        
+            Columns SellLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+                {
+                SellItems,
+                CartPanel});
 
-                Console.WriteLine("Enter Item Name To Purchase Or Type 'CHECKOUT' To Finish Sale");
-            } while (Console.ReadLine().ToUpper() != "CHECKOUT");
-
-
-            var CheckItem = new Panel(CheckTable)
-                .Border(BoxBorder.None)
-                .Header("CHECKOUT", Justify.Center)
-                .Expand();
-
-            var Totals = new Table()
-                .BorderColor(Color.Grey)
-                .Expand()
-                .AddColumn("")
-                .AddColumn("");
-
-
-            Totals.Columns[0].Header = new Text("Total [Excl.VAT]", new Style(decoration: Decoration.Bold)).RightJustified();
-            Totals.Columns[1].Header = new Text("R" + "", new Style(Color.Green, decoration: Decoration.Bold)).RightJustified();
-
-            Totals.Columns[0].Footer = new Text("Total [Incl.VAT]", new Style(decoration: Decoration.Bold)).RightJustified();
-            Totals.Columns[1].Footer = new Text("R" + "", new Style(Color.Green, decoration: Decoration.Bold)).RightJustified();
-
-            var CheckTotal = new Panel(Totals)
-                .Border(BoxBorder.None)
-                .Expand();
-
-            //CheckTable.AddRow("","Total [Incl.VAT(15%)]: ", "R"+TotalPriceVAT.ToString());
-
-            AnsiConsole.Write(Align.Center(CheckItem));
-
-            AnsiConsole.Write(Align.Center(CheckTotal));
-
+            AnsiConsole.Write(new Rule("[lightgreen bold] SELL STOCK[/]"));
+            AnsiConsole.Write(SellLayout);
         }
 
-        public static void UpdateProduct() 
+        public static void SellItem()
         {
-            var ProductList = DisplayStock();
+            List<Product> CartItems = new List<Product>();
+            
+            while (true) 
+            { 
+                SellItemMenu();
+
+                string[] ProductList = DisplayLoad().ProductList;
+
+                var SelectItem = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\n[cyan]Select An Item To Sell[/]")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
+                .AddChoices("[green]Proceed to Checkout?[/]")
+                .WrapAround());
+
+
+                if (SelectItem.Equals("[red]Cancel[/]"))
+                {
+                    Console.Clear();
+                    return;
+                } else if (SelectItem.Equals("[green]Proceed to Checkout?[/]"))
+                {
+                    Console.Clear();
+
+                    Checkout(CartItems);
+
+                    Console.Clear();
+                    return;
+                }
+                else
+                {   
+                    int ProductID = int.Parse(SelectItem.Substring(SelectItem.IndexOf("ID: ") + 4, SelectItem.IndexOf(")")));
+
+                    if (ProductID == CartItems.Find(x => x.ProductID == ProductID)?.ProductID) 
+                    {
+                        AnsiConsole.MarkupLine("[red]CANNOT ADD DUPLICATE ITEM TO CART[/]");
+                        Console.ReadKey();
+                    }
+                    else 
+                    {
+                        DatabaseManager Pull = new DatabaseManager();
+                        CartItems.Add(Pull.PullProduct(ProductID));
+
+                    }
+
+                }
+            }
+        }
+
+        public static void Checkout(List<Product> CartItems)
+        {
+            AnsiConsole.MarkupLine("\n[cyan]Checkout is currently unavailable, Please contact the developer to enable this feature[/]");
+            Console.ReadKey();
+        }
+
+        public static void UpdateProduct()
+        {
+            Columns DisplayLayout = DisplayFormat().DisplayFormat;
+
+            var ProductList = DisplayLoad().ProductList;
+
+            AnsiConsole.Write(DisplayLayout);
+            AnsiConsole.MarkupLine("\n[cyan]ℹ Select a product below to update[/]");
 
             var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("\nPlease Select A Product To Update")
@@ -176,94 +235,155 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
                 .WrapAround());
 
-            if (Choice.Equals("[red]Cancel[/]")) {                
+
+            if (Choice.Equals("[red]Cancel[/]"))
+            {
                 Console.Clear();
                 return;
             }
-            else 
+            else
             {
-                string ProductID = Choice.Remove(Choice.IndexOf(")"));
-                
+                string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")"));
+
                 DatabaseManager Pull = new DatabaseManager();
                 Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
-                
+
                 CurrentItem.UpdateProduct();
+               
             }
 
-
         }
+
+        public static void DeleteProduct()
+        {
+            Columns DisplayLayout = DisplayFormat().DisplayFormat;
+
+            var ProductList = DisplayLoad().ProductList;
+
+            AnsiConsole.Write(DisplayLayout);
+
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nPlease Select A Product To Delete")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
+                .WrapAround());
+
+            if (Choice.Equals("[red]Cancel[/]"))
+            {
+                Console.Clear();
+                return;
+            }
+            else
+            {
+                var Confirmation = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nARE YOU SURE YOU WISH TO DELETE THIS ITEM?")
+                .AddChoices("[red]Cancel[/]", "[green]Yes[/]")
+                .WrapAround());
+
+                if (Confirmation.Equals("[red]Cancel[/]"))
+                {
+                    Console.Clear();
+                    return;
+                }
+
+                string ProductID = Choice.Remove(Choice.IndexOf(")"));
+
+                DatabaseManager Pull = new DatabaseManager();
+                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
+
+                CurrentItem.DeleteProduct();
+            }
+            Console.Clear();
+        }
+
+        public static bool MainMenu()
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
+            AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
+
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("\nPlease Select An Option")
+            .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "Exit")
+            .WrapAround());
+
+            switch (Choice)
+            {
+                case "Add Item":
+                    {
+                        AddProduct();
+                        Console.Clear();
+                        return true;
+                    }
+
+                case "View Stock":
+                    {
+                        Console.Clear();
+
+                        Columns DisplayLayout = DisplayFormat().DisplayFormat;
+                        AnsiConsole.Write(DisplayLayout);
+                        AnsiConsole.MarkupLine("[yellow]Press Any Key To Continue[/]");
+
+                        Console.ReadKey();
+                        AnsiConsole.Clear();
+                        return true;
+                    }
+                case "Sell Items":
+                    {
+                        Console.Clear();
+
+                        SellItem();
+
+                        Console.ReadKey();
+                        Console.Clear();
+                        return true;
+                    }
+                case "Update Products":
+                    {
+                        UpdateProduct();
+                        Console.Clear();
+                        return true;
+                    }
+                case "Delete Products":
+                    {
+                        DeleteProduct();
+                        Console.Clear();
+                        return true;
+                    }
+                case "Exit":
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Exiting now");
+                        System.Environment.Exit(0);
+                        return false;
+                    }
+
+                default:
+                    {
+                        Console.WriteLine("Invalid Choice, Option not available");
+                        Console.ReadKey();
+                        Console.Clear();
+                        return true;
+                    }
+            }
+        }
+
 
 
         static void Main(string[] args)
         {
 
-            bool Continue = true;
+            bool showMenu = true;
 
-            decimal TotalPrice, TotalPriceVAT;
-
-            while (Continue)
+            while (showMenu)
             {
-                AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
-
-                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .Title("\nPlease Select An Option")
-                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Exit")
-                .WrapAround());
-
-                switch (Choice)
-                {
-                    case "Add Item":
-                        {
-                            AddProduct();
-                            Console.Clear();
-                            break;
-                        }
-
-                    case "View Stock":
-                        {
-                            Console.Clear();
-
-                            DisplayStock();
-
-                            Console.WriteLine("Press Any Key To Continue");
-                            Console.ReadKey();
-                            Console.Clear();
-
-                            break;
-                        }
-                    case "Sell Items":
-                        {
-                            Console.Clear();
-
-                            SellItem();
-
-                            Console.ReadKey();
-                            Console.Clear();
-                            break;
-                        }
-                    case "Update Products": 
-                        {
-                            UpdateProduct(); 
-                            Console.Clear();
-                            break;
-                        }
-                    case "Exit":
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Exiting now");
-                            System.Environment.Exit(0);
-                            break;
-                        }
-
-                    default:
-                        {
-                            Console.WriteLine("Invalid Choice, Option not available");
-                            Console.ReadKey();
-                            Console.Clear();
-                            break;
-                        }
-                }
+                showMenu = MainMenu();
             }
         }
     }
 }
+    
+
