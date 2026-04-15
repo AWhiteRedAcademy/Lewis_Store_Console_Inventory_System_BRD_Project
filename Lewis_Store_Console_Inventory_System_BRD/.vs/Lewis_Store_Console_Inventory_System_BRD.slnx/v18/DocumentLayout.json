@@ -17,6 +17,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\sqlquery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
       "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:sqlquery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\sqlquery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|ResultFrame",
+      "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:sqlquery1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|ResultFrame"
     }
   ],
   "DocumentGroupContainers": [
@@ -64,7 +68,7 @@
               "RelativeDocumentMoniker": "Library.cs",
               "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library.cs",
               "RelativeToolTip": "Library.cs",
-              "ViewState": "AgIAAMkAAAAAAAAAAAAhwNgAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAMcAAAAAAAAAAAAcwMgAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-17T12:31:58.633Z",
               "EditorCaption": ""
@@ -77,7 +81,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAMgAAAAAAAAAAAApwM4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAowF4AAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-02T11:11:33.973Z",
               "EditorCaption": ""

@@ -203,7 +203,7 @@ public class Product
             while (reader.Read())
             {
                 DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
-                ProductList[Count] = "1)    ID: "+ reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
+                ProductList[Count] = $"{Count + 1}.    ID: "+ reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
                 Count++;
             }
 

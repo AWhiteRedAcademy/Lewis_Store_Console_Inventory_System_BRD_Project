@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Spectre.Console;
+using System;
 using System.ComponentModel;
-using System.Threading.Channels;
-using Spectre.Console;
-using System.Data.SqlClient;
 using System.ComponentModel.Design;
+using System.Data.SqlClient;
+using System.Threading.Channels;
+using System.Xml.Linq;
 
 
 namespace Lewis_Store_Console_Inventory_System_BRD
@@ -73,57 +74,66 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             AnsiConsole.Write(Align.Center(ItemAddPanel));
 
             var NameP = new TextPrompt<string>("[yellow]Name Of Item: [/]")
+                .Validate(name =>
+                {
+                    if (string.IsNullOrWhiteSpace(name))
+                        return ValidationResult.Error("[red]Name cannot be empty[/]");
+                    else if (name.Length > 100)
+                        return ValidationResult.Error("[red]Name cannot exceed 100 characters[/]");
+                    else if (name.Contains("''") || name.Contains("\"\""))
+                        return ValidationResult.Error("[red]Name cannot contain quotes[/]");
+                    else
+                        return ValidationResult.Success();
+                })
                 .PromptStyle(new Style(Color.Yellow));
+
             var DescP = new TextPrompt<string>("[yellow]Description: [/]")
+                .Validate(desc =>
+                {
+                    if (string.IsNullOrWhiteSpace(desc))
+                        return ValidationResult.Error("[red]Description cannot be empty[/]");
+                    else if (desc.Length > 255)
+                        return ValidationResult.Error("[red]Description cannot exceed 255 characters[/]");
+                    else if (desc.Contains("''") || desc.Contains("\"\""))
+                        return ValidationResult.Error("[red]Name cannot contain quotes[/]");
+                    else
+                        return ValidationResult.Success();
+                })
                 .PromptStyle(new Style(Color.Yellow));
-            var QtyP = new TextPrompt<string>("[yellow]Qty: [/]")
+
+            var QtyP = new TextPrompt<int>("[yellow]Qty: [/]")
+                .Validate(qty =>
+                {
+                    if (qty < 0)
+                        return ValidationResult.Error("[red]Quantity cannot be negative[/]");
+                    else if (qty > 10000)
+                        return ValidationResult.Error("[red]Quantity cannot exceed 10,000[/]");
+                    else
+                        return ValidationResult.Success();
+                })
                 .PromptStyle(new Style(Color.Yellow));
-            var PriceP = new TextPrompt<string>("[yellow]Price Excl.VAT: [/]")
+
+            var PriceP = new TextPrompt<decimal>("[yellow]Price Excl.VAT: [/]")
+                .Validate(price =>
+                {
+                    if (price < 0)
+                        return ValidationResult.Error("[red]Price cannot be negative[/]");
+                    else if (price > 1000000)
+                        return ValidationResult.Error("[red]Price cannot exceed 1,000,000[/]");
+                    else
+                        return ValidationResult.Success();
+                })
                 .PromptStyle(new Style(Color.Yellow));
 
             string Name = AnsiConsole.Prompt(NameP);
 
-            if (Name == "")
-            {
-                Console.WriteLine("Error Invalid Name Please Try Again");
-                Console.ReadKey();
-                goto ErrorStart;
-
-            }
-
             string Desc = AnsiConsole.Prompt(DescP);
-            if (Desc == "")
-            {
-                Console.WriteLine("Error Invalid Description Please Try Again");
-                Console.ReadKey();
-                goto ErrorStart;
 
-            }
+            int Quantity = AnsiConsole.Prompt(QtyP);
 
-            if (!int.TryParse(AnsiConsole.Prompt(QtyP), out int Qty) || Qty < 0)
-            {
-                Console.WriteLine("Error Invalid Quantity, Has to Be A Valid Number And Cannot Be Less Than 0");
-                Console.ReadKey();
-                goto ErrorStart;
-            }
+            decimal Price = AnsiConsole.Prompt(PriceP);
 
-            string sPrice = AnsiConsole.Prompt(PriceP);
-
-            if (sPrice.Contains("."))
-            {
-                sPrice = sPrice.Replace(".", ",");
-            }
-
-            if (!decimal.TryParse(sPrice, out decimal Price) || Price < 0)
-            {
-
-                Console.WriteLine("Error Invalid Price, Has to Be A Valid Number And Cannot Be Less Than R0");
-                Console.ReadKey();
-                goto ErrorStart;
-
-            }
-
-            Product Add = new Product(0, Name.ToString(), Desc.ToString(), Qty, Price);
+            Product Add = new Product(0, Name.ToString(), Desc.ToString(), Quantity, Price);
             Add.AddProduct();
 
             AnsiConsole.MarkupLine("\n[green]Item Added Successfully[/]");
@@ -243,7 +253,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             }
             else
             {
-                string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")"));
+                string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")") - (Choice.IndexOf("ID: ") + 4));
 
                 DatabaseManager Pull = new DatabaseManager();
                 Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
@@ -289,7 +299,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     return;
                 }
 
-                string ProductID = Choice.Remove(Choice.IndexOf(")"));
+                string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")") - (Choice.IndexOf("ID: ") + 4));
 
                 DatabaseManager Pull = new DatabaseManager();
                 Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
@@ -360,7 +370,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         System.Environment.Exit(0);
                         return false;
                     }
-
                 default:
                     {
                         Console.WriteLine("Invalid Choice, Option not available");
@@ -380,9 +389,10 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             while (showMenu)
             {
-                showMenu = MainMenu();
+                showMenu = MainMenu();  
             }
         }
+    
     }
 }
     
