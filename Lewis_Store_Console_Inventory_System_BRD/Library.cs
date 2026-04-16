@@ -177,6 +177,124 @@ public class Product
     }
 }
 
+public class Display
+{
+    public DatabaseManager display = new DatabaseManager();
+
+    public Table StockTable;
+
+    public Rows StockWarningRow;
+    public Panel StockWarning;
+    public string[] ProductList;
+
+    public Display()
+    {
+        StockTable = new Table()
+                    .RoundedBorder()
+                    .BorderColor(Color.Grey)
+                    .ShowRowSeparators();
+        StockTable.AddColumn("[yellow]Item[/]");
+        StockTable.AddColumn("[yellow]Description[/]");
+        StockTable.AddColumn("[yellow]Qty[/]");
+        StockTable.AddColumn("[yellow]Price.Excl VAT[/]");
+
+        var (productlist, stockwarn) = display.DisplayStock(StockTable);
+
+        ProductList = productlist;
+
+        StockWarningRow = new Rows(stockwarn);
+
+        StockWarning = new Panel(StockWarningRow)
+                    .Header("[red bold]Stock Warnings[/]", Justify.Center)
+                    .RoundedBorder()
+                    .BorderColor(Color.Red)
+                    .Padding(1, 1);
+    }
+
+    public virtual void ViewStock()
+    {
+
+        var DisplayPanel = new Panel(StockTable)
+            .Header("[lightgreen bold]View Product Stock[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Blue)
+            .Padding(2, 1);
+
+        var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+            {
+                DisplayPanel,
+                StockWarning
+            });
+
+        AnsiConsole.Write(DisplayLayout);
+    }
+
+    public void UpdateStock()
+    {
+        var DisplayPanel = new Panel(StockTable)
+            .Header("[lightgreen bold]Update Product Stock[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Blue)
+            .Padding(2, 1);
+
+        var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+            {
+                DisplayPanel,
+                StockWarning
+            });
+
+        AnsiConsole.Write(DisplayLayout);
+
+    }
+
+    public void DeleteStock()
+    {
+        var DisplayPanel = new Panel(StockTable)
+            .Header("[lightgreen bold]Delete Product[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Blue)
+            .Padding(2, 1);
+
+        var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+            {
+                DisplayPanel
+            });
+
+        AnsiConsole.Write(DisplayLayout);
+    }
+
+    public void SellItemMenu(List<Product> CartList)
+    {
+        Panel SellItems = new Panel(StockTable)
+            .Header("[lightgreen bold]Purchase[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Blue)
+            .Padding(2, 1);
+
+        Table Cart = new Table()
+            .RoundedBorder()
+            .BorderColor(Color.Grey)
+            .Expand();
+
+        Cart.AddColumn("[yellow]Items[/]", col => col.Centered());
+
+        Panel CartPanel = new Panel(Cart)
+            .Header("[lightgreen bold]Cart[/]", Justify.Center)
+            .RoundedBorder()
+            .BorderColor(Color.Blue)
+            .Padding(2, 1);
+
+        Columns SellLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
+            {
+                SellItems,
+                CartPanel});
+
+        AnsiConsole.Write(new Rule("[lightgreen bold] SELL STOCK[/]"));
+        AnsiConsole.Write(SellLayout);
+
+    }
+}
+
     public class DatabaseManager
     {
         private SqlConnection Connection { get; }
