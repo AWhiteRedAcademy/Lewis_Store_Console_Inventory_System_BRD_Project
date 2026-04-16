@@ -60,12 +60,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             return (DisplayLayout, DisplayPanel);
         }
 
-
-
         public static void AddProduct()
         {
-        ErrorStart:
-
             Console.Clear();
 
             var ItemAddPanel = new Panel("")
