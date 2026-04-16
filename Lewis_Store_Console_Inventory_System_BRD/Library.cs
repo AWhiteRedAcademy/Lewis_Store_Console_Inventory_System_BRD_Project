@@ -1,4 +1,10 @@
-﻿using Spectre.Console; using System; using System.Data.SqlClient; using System.Diagnostics; using System.IO.Pipelines; using System.Xml.Linq;
+﻿using Spectre.Console;
+using Spectre.Console.Rendering;
+using System; 
+using System.Data.SqlClient; 
+using System.Diagnostics; 
+using System.IO.Pipelines; 
+using System.Xml.Linq;
 
 public class Product
 {
@@ -189,13 +195,15 @@ public class Product
             }
         }
 
-        public string[] DisplayStock(Table DisplayTable, Panel StockWarning)
+        public (string[]  ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
         {
 
             Connection.Open();
 
-            string[] ProductList = new string[100];
-            int Count = 0;
+            string[] productlist = new string[100];
+            List<IRenderable> stockwarn = new List<IRenderable>();
+
+        int Count = 0;
 
             SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
             SqlDataReader reader = command.ExecuteReader();
@@ -203,14 +211,20 @@ public class Product
             while (reader.Read())
             {
                 DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
-                ProductList[Count] = $"{Count + 1}.    ID: "+ reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
-                Count++;
+                productlist[Count] = $"{Count + 1}.    ID: "+ reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
+
+                if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
+                {
+                    stockwarn.Add(new Markup($"[red bold]WARNING: {reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
+                }
+
+            Count++;
             }
 
             reader.Close();
             Connection.Close();
 
-            return ProductList;
+            return (productlist, stockwarn);
 
         }
 

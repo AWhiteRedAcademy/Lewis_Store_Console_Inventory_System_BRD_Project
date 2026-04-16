@@ -25,14 +25,18 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             DisplayTable.AddColumns("[yellow]Qty[/]");
             DisplayTable.AddColumns("[yellow]Price.Excl VAT[/]");
 
-            var StockWarning = new Panel("[red bold]WARNING: LOW STOCK![/]")
-                .Header("[yellow bold]Stock Warning[/]", Justify.Center)
+            DatabaseManager display = new DatabaseManager();
+            var (ProductList, StockWarn) = display.DisplayStock(DisplayTable);
+
+            var StockWarningRow = new Rows(StockWarn);
+
+            var StockWarning = new Panel(StockWarningRow)
+                .Header("[red bold]Stock Warnings[/]", Justify.Center)
                 .RoundedBorder()
                 .BorderColor(Color.Red)
-                .Padding(1, 0);
+                .Padding(1, 1);
 
-            DatabaseManager display = new DatabaseManager();
-            var ProductList = display.DisplayStock(DisplayTable, StockWarning);
+
 
             return (ProductList, DisplayTable, StockWarning);
         }
