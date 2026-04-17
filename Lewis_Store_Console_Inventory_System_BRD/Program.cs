@@ -97,57 +97,88 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             {
                 List<Product> CartItems = new List<Product>();
 
-                while (true)
+                Display Sell = new Display();
+
+                List<string> ProductList = Sell.ProductList;
+                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
                 {
-                    Display Sell = new Display();
+                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
 
-                    string[] ProductList = Sell.ProductList;
+                }
 
-                    Sell.SellItemMenu(CartItems);
+            while (true)
+            {
+                Console.Clear();
+                Sell = new Display();
 
-                    var SelectItem = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("\n[cyan]Select An Item To Sell[/]")
-                    .PageSize(10)
-                    .EnableSearch()
-                    .SearchPlaceholderText("Type to search Products...")
-                    .AddChoices("[red]Cancel[/]")
-                    .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
-                    .AddChoices("[green]Proceed to Checkout?[/]")
-                    .WrapAround());
+                Sell.SellItemMenu(CartItems);
+
+                var SelectItem = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\n[cyan]Select An Item To Sell[/]")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
+                .AddChoices("[green]Proceed to Checkout?[/]")
+                .WrapAround());
 
 
-                    if (SelectItem.Equals("[red]Cancel[/]"))
+                if (SelectItem.Equals("[red]Cancel[/]"))
+                {
+                    Console.Clear();
+                    return;
+                }
+                else if (SelectItem.Equals("[green]Proceed to Checkout?[/]"))
+                {
+                    Console.Clear();
+
+                    Checkout(CartItems);
+
+                    Console.Clear();
+                    return;
+                }
+                else
+                {
+                    string SProductID = ProductList.Where(p => p.Contains(SelectItem)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(SelectItem)).FirstOrDefault().IndexOf(")"));
+
+                    SProductID = SProductID.Substring(SProductID.IndexOf("ID: ") + 4, SProductID.Length - (SProductID.IndexOf("ID: ") + 4));
+
+                    int ProductID = int.Parse(SProductID);
+
+                    if (ProductID == CartItems.Find(x => x.ProductID == ProductID)?.ProductID)
                     {
-                        Console.Clear();
-                        return;
-                    }
-                    else if (SelectItem.Equals("[green]Proceed to Checkout?[/]"))
-                    {
-                        Console.Clear();
-
-                        Checkout(CartItems);
-
-                        Console.Clear();
-                        return;
+                        AnsiConsole.MarkupLine("[red]CANNOT ADD DUPLICATE ITEM TO CART[/]");
+                        Console.ReadKey();
                     }
                     else
                     {
-                        int ProductID = int.Parse(SelectItem.Substring(SelectItem.IndexOf("ID: ") + 4, SelectItem.IndexOf(")")));
+                        DatabaseManager Pull = new DatabaseManager();
+                        CartItems.Add(Pull.PullProduct(ProductID));
 
-                        if (ProductID == CartItems.Find(x => x.ProductID == ProductID)?.ProductID)
-                        {
-                            AnsiConsole.MarkupLine("[red]CANNOT ADD DUPLICATE ITEM TO CART[/]");
-                            Console.ReadKey();
-                        }
-                        else
-                        {
-                            DatabaseManager Pull = new DatabaseManager();
-                            CartItems.Add(Pull.PullProduct(ProductID));
+                        var Quantity = new TextPrompt<int>("[yellow]Quantity To Purchase: [/]")
+                            .Validate(Quantity =>
+                            {
+                                if (Quantity < 0)
+                                {
+                                    return ValidationResult.Error("[red]Quantity must be greater than 0[/]");
+                                }
 
-                        }
+                                if (CartItems.Find(x => x.ProductID == ProductID).Quantity < Quantity)
+                                {
+                                    return ValidationResult.Error("[red]Quantity exceeds available stock[/]");
+                                }
 
+                                return ValidationResult.Success();
+                            });
+
+                        CartItems.Find(x => x.ProductID == ProductID).Quantity = AnsiConsole.Prompt(Quantity);
                     }
+
                 }
+            }
             }
 
             public static void Checkout(List<Product> CartItems)
@@ -161,7 +192,14 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Display Update = new Display();
                 Update.UpdateStock();
 
-                var ProductList = Update.ProductList;
+                List<string> ProductList = Update.ProductList;
+                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
+                {
+                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
+
+                }
 
                 AnsiConsole.MarkupLine("\n[cyan]ℹ Select a product below to update[/]");
 
@@ -171,7 +209,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     .EnableSearch()
                     .SearchPlaceholderText("Type to search Products...")
                     .AddChoices("[red]Cancel[/]")
-                    .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
+                    .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
                     .WrapAround());
 
 
@@ -182,7 +220,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 }
                 else
                 {
-                    string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")") - (Choice.IndexOf("ID: ") + 4));
+                    string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
+
+                    ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
 
                     DatabaseManager Pull = new DatabaseManager();
                     Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
@@ -199,7 +239,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Display Delete = new Display();
                 Delete.DeleteStock();
 
-                var ProductList = Delete.ProductList;
+                List<string> ProductList = Delete.ProductList;
+                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
+                {
+                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
+                }
 
                 var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("\nPlease Select A Product To Delete")
@@ -207,7 +253,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     .EnableSearch()
                     .SearchPlaceholderText("Type to search Products...")
                     .AddChoices("[red]Cancel[/]")
-                    .AddChoices(ProductList.Where(p => p != null && p != "Null").ToArray())
+                    .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
                     .WrapAround());
 
                 if (Choice.Equals("[red]Cancel[/]"))
@@ -228,7 +274,9 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         return;
                     }
 
-                    string ProductID = Choice.Substring(Choice.IndexOf("ID: ") + 4, Choice.IndexOf(")") - (Choice.IndexOf("ID: ") + 4));
+                    string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
+
+                    ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
 
                     DatabaseManager Pull = new DatabaseManager();
                     Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));

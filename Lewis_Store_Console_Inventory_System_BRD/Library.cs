@@ -174,8 +174,20 @@ public class Product
             Add.AddSale(ProductID, QuantitySold, Subtotal, VatAmount, TotalAmount, SaleDate);
         }
 
+       /* public void AddSaleItem(int saleID, List<Product> SaleItems)
+        {
+            DatabaseManager Add = new DatabaseManager();
+
+            foreach (var Product in SaleItems)
+            {
+                Add.AddSaleItem(saleID, Product.ProductID, Product.Quantity, Product.PriceExclVAT);
+            }
+        }*/
+
     }
 }
+
+
 
 public class Display
 {
@@ -185,7 +197,7 @@ public class Display
 
     public Rows StockWarningRow;
     public Panel StockWarning;
-    public string[] ProductList;
+    public List<string> ProductList;
 
     public Display()
     {
@@ -313,23 +325,23 @@ public class Display
             }
         }
 
-        public (string[]  ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
+        public (List<string>  ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
         {
 
             Connection.Open();
 
-            string[] productlist = new string[100];
+            List<string> productlist = new List<string>();
             List<IRenderable> stockwarn = new List<IRenderable>();
 
-        int Count = 0;
+            int Count = 0;
 
             SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
             SqlDataReader reader = command.ExecuteReader();
 
-            while (reader.Read())
+        while (reader.Read())
             {
                 DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
-                productlist[Count] = $"{Count + 1}.    ID: "+ reader["ProductID"].ToString() + ")" + reader["ProductName"].ToString();
+                productlist.Add($"ID: {reader["ProductID"].ToString()}){Count + 1}. " + reader["ProductName"].ToString());
 
                 if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
                 {
