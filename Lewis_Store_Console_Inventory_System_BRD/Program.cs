@@ -5,6 +5,7 @@ using System.ComponentModel.Design;
 using System.Data.SqlClient;
 using System.Threading.Channels;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Lewis_Store_Console_Inventory_System_BRD
@@ -158,7 +159,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         DatabaseManager Pull = new DatabaseManager();
                         CartItems.Add(Pull.PullProduct(ProductID));
 
-                        var Quantity = new TextPrompt<int>("[yellow]Quantity To Purchase: [/]")
+                        var QuantityPrompt = new TextPrompt<int>("[yellow]Quantity To Purchase: [/]")
                             .Validate(Quantity =>
                             {
                                 if (Quantity < 0)
@@ -174,20 +175,77 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                 return ValidationResult.Success();
                             });
 
-                        CartItems.Find(x => x.ProductID == ProductID).Quantity = AnsiConsole.Prompt(Quantity);
+                        int Quantity = AnsiConsole.Prompt(QuantityPrompt);
+
+                        CartItems.Find(x => x.ProductID == ProductID).SellProduct(Quantity);
+
+                        CartItems.Find(x => x.ProductID == ProductID).Quantity = Quantity;
                     }
 
                 }
             }
             }
 
-            public static void Checkout(List<Product> CartItems)
+        public static void Checkout(List<Product> CartItems)
+        {
+
+            var CheckoutTable = new Table();
+            CheckoutTable.Border(TableBorder.Minimal);
+            CheckoutTable.AddColumn("[grey]Qty[/]");
+            CheckoutTable.AddColumn("[grey]Item[/]");
+            CheckoutTable.AddColumn(new TableColumn("[grey]Price[/]").RightAligned());
+
+            decimal subtotal = CartItems.Sum(item => item.PriceExclVAT * item.Quantity);
+            decimal tax = subtotal * 0.15m;
+            decimal total = subtotal + tax;
+
+            SaleItem SaleItems;
+
+            DateTime DateOfSale = DateTime.Now;
+
+            Sale Sale = new Sale(subtotal, tax, total, DateOfSale);
+            int SaleID = Sale.AddSale();
+
+            foreach (var item in CartItems)
             {
-                AnsiConsole.MarkupLine("\n[cyan]Checkout is currently unavailable, Please contact the developer to enable this feature[/]");
-                Console.ReadKey();
+                CheckoutTable.AddRow(
+                    new Markup($"[yellow]{item.Quantity}[/]"),
+                    new Markup($"[yellow]{item.Name}[/]"),
+                    new Markup($"[yellow]{(item.PriceExclVAT * item.Quantity):C2}[/]")
+                );
+                SaleItems = new SaleItem(SaleID, item.ProductID, item.Quantity, item.PriceExclVAT);
             }
 
-            public static void UpdateProduct()
+           
+
+            var footer = new Markup(
+                $"[bold]Subtotal:[/] {subtotal:C2}\n" +
+                $"[bold]VAT (15%):[/] {tax:C2}\n" +
+                $"[bold]Total:[/] [green]{total:C2}[/]"
+            );
+
+            var CheckoutPanel = new Panel(
+                new Rows(
+                    new Markup($"[bold]RECEIPT #{SaleID}[/]"),
+                    new Text(DateOfSale.ToString()),
+                    new Rule("[grey]--[/]"),
+                    CheckoutTable,
+                    new Rule("[grey]--[/]"),
+                    footer
+                )
+            )
+            {
+                Header = new PanelHeader("LEWIS STORE"),
+                Border = BoxBorder.Rounded,
+                Padding = new Padding(1, 1, 1, 1),
+                Width = 50
+            };
+
+            AnsiConsole.Write(Align.Center(CheckoutPanel));
+            Console.ReadKey();
+        }
+
+        public static void UpdateProduct()
             {
                 Display Update = new Display();
                 Update.UpdateStock();

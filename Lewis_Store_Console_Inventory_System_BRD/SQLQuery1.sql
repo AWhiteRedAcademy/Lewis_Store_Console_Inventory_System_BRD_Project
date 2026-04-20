@@ -33,3 +33,5 @@ CREATE TABLE SaleItems(
 INSERT INTO Products(ProductName,Description,QuantityInStock,PriceExcludingVAT) VALUES('Steel Fan', 'Its a steel fan with 16cm blades', 100, 1250.50)
 
 DELETE FROM Products WHERE ProductName = '""'
+
+SELECT * FROM Products, SaleItems, Sales

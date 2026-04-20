@@ -140,50 +140,62 @@ public class Product
 
     public void SellProduct(int quantity)
     {
-        if (quantity > 0 && quantity <= Quantity)
-        {
-            Quantity -= quantity;
-        }
-        else
-        {
-            Console.WriteLine("ERROR: Invalid Quantity. Please enter a quantity between 1 and " + Quantity);
-        }
+        Quantity -= quantity;
+        DatabaseManager Update = new DatabaseManager();
+        Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
+    }
+}
+
+
+public class Sale
+{
+    private int _SaleID;
+    private decimal _Subtotal;
+    private decimal _VatAmount;
+    private decimal _TotalAmount;
+    private DateTime _SaleDate;
+
+    public int SaleID { get { return _SaleID; } set { _SaleID = value; } }
+    public decimal Subtotal { get { return _Subtotal; } set { _Subtotal = value; } }
+    public decimal VatAmount { get { return _VatAmount; } set { _VatAmount = value; } }
+    public decimal TotalAmount { get { return _TotalAmount; } set { _TotalAmount = value; } }
+    public DateTime SaleDate { get { return _SaleDate; } set { _SaleDate = value; } }
+
+    public Sale(decimal subtotal, decimal vatamount, decimal totalamount, DateTime saledate)
+    {
+        Subtotal = subtotal;
+        VatAmount = vatamount;
+        TotalAmount = totalamount;
+        SaleDate = saledate;
     }
 
-    public class Sale
+    public int AddSale()
     {
-        private int ProductID { get; set; }
-        private int QuantitySold { get; set; }
-        private decimal Subtotal { get; set; }
-        private decimal VatAmount { get; set; }
-        private decimal TotalAmount { get; set; }
-        private DateOnly SaleDate { get; set; }
-        public Sale(int productid, int quantity, decimal subtotal, decimal vatamount, decimal totalamount, DateOnly saledate)
-        {
-            ProductID = productid;
-            QuantitySold = quantity;
-            Subtotal = subtotal;
-            VatAmount = vatamount;
-            TotalAmount = totalamount;
-            SaleDate = saledate;
-        }
+        DatabaseManager Add = new DatabaseManager();
+        SaleID = Add.AddSale(Subtotal, VatAmount, TotalAmount, SaleDate);
+        return SaleID;
+    }
+}
 
-        public void AddSale()
-        {
-            DatabaseManager Add = new DatabaseManager();
-            Add.AddSale(ProductID, QuantitySold, Subtotal, VatAmount, TotalAmount, SaleDate);
-        }
+public class SaleItem
+{
+    private int ProductID { get; set; }
+    private int SaleID { get; set; }
+    private decimal SalePrice { get; set; }
+    private int Quantity { get; set; }
 
-       /* public void AddSaleItem(int saleID, List<Product> SaleItems)
-        {
-            DatabaseManager Add = new DatabaseManager();
+    public SaleItem(int saleID, int ProductID, int Quantity, decimal SalePrice)
+    {
+        SaleID = saleID;
+        ProductID = ProductID;
+        Quantity = Quantity;
+        SalePrice = SalePrice;
+    }
 
-            foreach (var Product in SaleItems)
-            {
-                Add.AddSaleItem(saleID, Product.ProductID, Product.Quantity, Product.PriceExclVAT);
-            }
-        }*/
-
+    public void AddSaleItem()
+    {
+        DatabaseManager Add = new DatabaseManager();
+        Add.AddSaleItem(SaleID, ProductID, Quantity, SalePrice);
     }
 }
 
@@ -290,6 +302,11 @@ public class Display
 
         Cart.AddColumn("[yellow]Items[/]", col => col.Centered());
 
+            foreach (var item in CartList)
+            {
+                Cart.AddRow($"{item.Name} x{item.Quantity} - R{item.PriceExclVAT * item.Quantity}");
+            }
+
         Panel CartPanel = new Panel(Cart)
             .Header("[lightgreen bold]Cart[/]", Justify.Center)
             .RoundedBorder()
@@ -307,159 +324,165 @@ public class Display
     }
 }
 
-    public class DatabaseManager
+public class DatabaseManager
+{
+    private SqlConnection Connection { get; }
+
+    public DatabaseManager()
     {
-        private SqlConnection Connection { get; }
-
-        public DatabaseManager()
+        try
         {
-            try
-            {
-                string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;";
-                Connection = new SqlConnection(connectionstring);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Connection to Database Failed: " + ex.Message);
-                Console.ReadKey();
-            }
+            string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;";
+            Connection = new SqlConnection(connectionstring);
         }
-
-        public (List<string>  ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
+        catch (Exception ex)
         {
-
-            Connection.Open();
-
-            List<string> productlist = new List<string>();
-            List<IRenderable> stockwarn = new List<IRenderable>();
-
-            int Count = 0;
-
-            SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
-            SqlDataReader reader = command.ExecuteReader();
-
-        while (reader.Read())
-            {
-                DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
-                productlist.Add($"ID: {reader["ProductID"].ToString()}){Count + 1}. " + reader["ProductName"].ToString());
-
-                if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
-                {
-                    stockwarn.Add(new Markup($"[red bold]WARNING: {reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
-                }
-
-            Count++;
-            }
-
-            reader.Close();
-            Connection.Close();
-
-            return (productlist, stockwarn);
-
-        }
-
-        public Product PullProduct(int ItemID)
-        {
-            Connection.Open();
-
-            SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
-
-            command.Parameters.AddWithValue("ID", ItemID);
-
-            SqlDataReader reader = command.ExecuteReader();
-            reader.Read();
-
-            Product Item = new Product(ItemID, reader["ProductName"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), decimal.Parse(reader["PriceExcludingVAT"].ToString()));
-
-            reader.Close();
-            Connection.Close();
-
-            return Item;
-        }
-
-        public void AddProduct(string ProductName, string Description, int QuantityInStock, decimal PriceExcludingVAT)
-        {
-            Connection.Open();
-
-            string query = $"INSERT INTO Products (ProductName,Description,QuantityInStock,PriceExcludingVAT) " +
-                           $"VALUES (@Name,@Desc,@Qty,@Price)";
-            SqlCommand command = new SqlCommand(query, Connection);
-
-            command.Parameters.AddWithValue("@Name", ProductName);
-            command.Parameters.AddWithValue("@Desc", Description);
-            command.Parameters.AddWithValue("@Qty", QuantityInStock);
-            command.Parameters.AddWithValue("@Price", PriceExcludingVAT);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
-
-        }
-
-        public void UpdateProduct(int id, string Name, string Description, int Quantity, decimal Price)
-        {
-            Connection.Open();
-
-            string query = $"UPDATE Products SET ProductName = @Name, Description = @Description, QuantityInStock = @Qty, PriceExcludingVAT = @Price WHERE ProductID = @ID";
-            SqlCommand command = new SqlCommand(query, Connection);
-
-            command.Parameters.AddWithValue("@ID", id);
-            command.Parameters.AddWithValue("@Name", Name);
-            command.Parameters.AddWithValue("@Description", Description);
-            command.Parameters.AddWithValue("@Qty", Quantity);
-            command.Parameters.AddWithValue("@Price", Price);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
-        }
-
-        public void DeleteProduct(int id)
-        {
-            Connection.Open();
-
-            string query = $"DELETE FROM Products WHERE ProductID = @ID";
-            SqlCommand command = new SqlCommand(query, Connection);
-
-            command.Parameters.AddWithValue("@ID", id);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
-        }
-        public void AddSale(int productid, int quantity, decimal subtotal, decimal vatamount, decimal totalamount, DateOnly saledate)
-        {
-            Connection.Open();
-
-            string query = $"INSERT INTO Sales (Subtotal,VATAmount,TotalAmount,SalesDate) " +
-                           $"VALUES (@subtotal, @vatamount, @totalamount, @saledate)";
-            SqlCommand command = new SqlCommand(query, Connection);
-
-            command.Parameters.AddWithValue("@subtotal", subtotal);
-            command.Parameters.AddWithValue("@vatamount", vatamount);
-            command.Parameters.AddWithValue("@totalamount", totalamount);
-            command.Parameters.AddWithValue("@saledate", saledate);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
-        }
-
-        public void AddSaleItem(int saleID, int productID, int quantity, decimal saleprice)
-        {
-            Connection.Open();
-
-            string query = $"INSERT INTO SaleItems (SaleID, ProductID, Quantity, SalePrice) " +
-                           $"VALUES (@saleID, @productID, @quantity, @saleprice)";
-            SqlCommand command = new SqlCommand(query, Connection);
-
-            command.Parameters.AddWithValue("@saleID", saleID);
-            command.Parameters.AddWithValue("@productID", productID);
-            command.Parameters.AddWithValue("@quantity", quantity);
-            command.Parameters.AddWithValue("@saleprice", saleprice);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
+            Console.WriteLine("Connection to Database Failed: " + ex.Message);
+            Console.ReadKey();
         }
     }
+
+    public (List<string> ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
+    {
+
+        Connection.Open();
+
+        List<string> productlist = new List<string>();
+        List<IRenderable> stockwarn = new List<IRenderable>();
+
+        int Count = 0;
+
+        SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
+        SqlDataReader reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
+            productlist.Add($"ID: {reader["ProductID"].ToString()}){Count + 1}. " + reader["ProductName"].ToString());
+
+            if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
+            {
+                stockwarn.Add(new Markup($"[red bold]WARNING: {reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
+            }
+
+            Count++;
+        }
+
+        reader.Close();
+        Connection.Close();
+
+        return (productlist, stockwarn);
+
+    }
+
+    public Product PullProduct(int ItemID)
+    {
+        Connection.Open();
+
+        SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
+
+        command.Parameters.AddWithValue("ID", ItemID);
+
+        SqlDataReader reader = command.ExecuteReader();
+        reader.Read();
+
+        Product Item = new Product(ItemID, reader["ProductName"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), decimal.Parse(reader["PriceExcludingVAT"].ToString()));
+
+        reader.Close();
+        Connection.Close();
+
+        return Item;
+    }
+
+    public void AddProduct(string ProductName, string Description, int QuantityInStock, decimal PriceExcludingVAT)
+    {
+        Connection.Open();
+
+        string query = $"INSERT INTO Products (ProductName,Description,QuantityInStock,PriceExcludingVAT) " +
+                       $"VALUES (@Name,@Desc,@Qty,@Price)";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@Name", ProductName);
+        command.Parameters.AddWithValue("@Desc", Description);
+        command.Parameters.AddWithValue("@Qty", QuantityInStock);
+        command.Parameters.AddWithValue("@Price", PriceExcludingVAT);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
+
+    }
+
+    public void UpdateProduct(int id, string Name, string Description, int Quantity, decimal Price)
+    {
+        Connection.Open();
+
+        string query = $"UPDATE Products SET ProductName = @Name, Description = @Description, QuantityInStock = @Qty, PriceExcludingVAT = @Price WHERE ProductID = @ID";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@ID", id);
+        command.Parameters.AddWithValue("@Name", Name);
+        command.Parameters.AddWithValue("@Description", Description);
+        command.Parameters.AddWithValue("@Qty", Quantity);
+        command.Parameters.AddWithValue("@Price", Price);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
+    }
+
+    public void DeleteProduct(int id)
+    {
+        Connection.Open();
+
+        string query = $"DELETE FROM Products WHERE ProductID = @ID";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@ID", id);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
+    }
+    public int AddSale(decimal subtotal, decimal vatamount, decimal totalamount, DateTime saledate)
+    {
+        Connection.Open();
+
+        string query = $"INSERT INTO Sales (Subtotal,VATAmount,TotalAmount,SalesDate) " +
+                       $"VALUES (@subtotal, @vatamount, @totalamount, @saledate)";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@subtotal", subtotal);
+        command.Parameters.AddWithValue("@vatamount", vatamount);
+        command.Parameters.AddWithValue("@totalamount", totalamount);
+        command.Parameters.AddWithValue("@saledate", saledate);
+
+        command.ExecuteNonQuery();
+
+        // Get the ID of the newly inserted sale
+        command.CommandText = "SELECT SCOPE_IDENTITY() AS SaleID";
+        int saleID = Convert.ToInt32(command.ExecuteScalar());
+
+        Connection.Close();
+
+        return saleID;
+    }
+
+    public void AddSaleItem(int saleID, int productID, int quantity, decimal saleprice)
+    {
+        Connection.Open();
+
+        string query = $"INSERT INTO SaleItems (SaleID, ProductID, Quantity, SalePrice) " +
+                       $"VALUES (@saleID, @productID, @quantity, @saleprice)";
+        SqlCommand command = new SqlCommand(query, Connection);
+
+        command.Parameters.AddWithValue("@saleID", saleID);
+        command.Parameters.AddWithValue("@productID", productID);
+        command.Parameters.AddWithValue("@quantity", quantity);
+        command.Parameters.AddWithValue("@saleprice", saleprice);
+
+        command.ExecuteNonQuery();
+
+        Connection.Close();
+    }
+}
