@@ -354,7 +354,17 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Console.Clear();
             }
 
-            public static bool MainMenu()
+            public static void ViewSalesHistory()
+            {
+                Display History = new Display();
+                History.SalesHistory();
+
+                AnsiConsole.MarkupLine("\n[yellow]Press Any Key To Continue[/]");
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+        public static bool MainMenu()
             {
                 AnsiConsole.Clear();
                 AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
@@ -362,7 +372,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                 var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("\nPlease Select An Option")
-                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "Exit")
+                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "View Sales History", "Exit")
                 .WrapAround());
 
                 switch (Choice)
@@ -406,6 +416,12 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         {
                             DeleteProduct();
 
+                            Console.Clear();
+                            return true;
+                        }
+                    case "View Sales History":
+                        {
+                            ViewSalesHistory();
                             Console.Clear();
                             return true;
                         }
