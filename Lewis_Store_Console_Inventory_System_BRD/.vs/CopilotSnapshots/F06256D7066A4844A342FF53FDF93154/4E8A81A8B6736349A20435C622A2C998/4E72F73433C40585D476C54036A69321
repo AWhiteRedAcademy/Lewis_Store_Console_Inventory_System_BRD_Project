@@ -5,7 +5,6 @@ using System.ComponentModel.Design;
 using System.Data.SqlClient;
 using System.Threading.Channels;
 using System.Xml.Linq;
-using SqlClient = System.Data.SqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -207,26 +206,18 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             Sale Sale = new Sale(subtotal, tax, total, DateOfSale);
             int SaleID = Sale.AddSale();
 
-            try
+            foreach (var item in CartItems)
             {
-                foreach (var item in CartItems)
-                {
-                    CheckoutTable.AddRow(
-                        new Markup($"[yellow]{item.Quantity}[/]"),
-                        new Markup($"[yellow]{item.Name}[/]"),
-                        new Markup($"[yellow]{(item.PriceExclVAT * item.Quantity):C2}[/]")
-                    );
-                    SaleItems = new SaleItem(SaleID, item.ProductID, item.Quantity, item.PriceExclVAT);
-                    SaleItems.AddSaleItem();
-                }
+                CheckoutTable.AddRow(
+                    new Markup($"[yellow]{item.Quantity}[/]"),
+                    new Markup($"[yellow]{item.Name}[/]"),
+                    new Markup($"[yellow]{(item.PriceExclVAT * item.Quantity):C2}[/]")
+                );
+                SaleItems = new SaleItem(SaleID, item.ProductID, item.Quantity, item.PriceExclVAT);
+                SaleItems.AddSaleItem();
             }
-            catch (SqlClient.SqlException ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: One or more products in your cart are no longer available. The sale has been cancelled.[/]");
-                AnsiConsole.MarkupLine($"[yellow]Details: {ex.Message}[/]");
-                Console.ReadKey();
-                return;
-            }
+
+           
 
             var footer = new Markup(
                 $"[bold]Subtotal:[/] {subtotal:C2}\n" +

@@ -184,12 +184,12 @@ public class SaleItem
     private decimal SalePrice { get; set; }
     private int Quantity { get; set; }
 
-    public SaleItem(int saleID, int productID, int quantity, decimal salePrice)
+    public SaleItem(int saleID, int ProductID, int Quantity, decimal SalePrice)
     {
         SaleID = saleID;
-        ProductID = productID;
-        Quantity = quantity;
-        SalePrice = salePrice;
+        ProductID = ProductID;
+        Quantity = Quantity;
+        SalePrice = SalePrice;
     }
 
     public void AddSaleItem()
@@ -228,7 +228,7 @@ public class Display
 
         StockWarningRow = new Rows(stockwarn);
 
-        StockWarning = new Panel(StockWarningRow) {Width = 50 }
+        StockWarning = new Panel(StockWarningRow)
                     .Header("[red bold]Stock Warnings[/]", Justify.Center)
                     .RoundedBorder()
                     .BorderColor(Color.Red)
@@ -350,8 +350,6 @@ public class DatabaseManager
         List<string> productlist = new List<string>();
         List<IRenderable> stockwarn = new List<IRenderable>();
 
-        stockwarn.Add(new Markup("[red]Warning: [/]"));
-
         int Count = 0;
 
         SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
@@ -364,16 +362,10 @@ public class DatabaseManager
 
             if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
             {
-                stockwarn.Add(new Markup($"[red bold]{reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
+                stockwarn.Add(new Markup($"[red bold]WARNING: {reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
             }
 
             Count++;
-        }
-
-        if (stockwarn.Count < 2)
-        {
-            stockwarn.Clear();
-            stockwarn.Add(new Markup("[green bold]All Stock Levels Are Sufficient![/]"));
         }
 
         reader.Close();
@@ -483,19 +475,6 @@ public class DatabaseManager
     {
         Connection.Open();
 
-        // Validate that the ProductID still exists in the database
-        string validateQuery = "SELECT COUNT(*) FROM Products WHERE ProductID = @productID";
-        SqlCommand validateCommand = new SqlCommand(validateQuery, Connection);
-        validateCommand.Parameters.AddWithValue("@productID", productID);
-
-        int productExists = (int)validateCommand.ExecuteScalar();
-
-        if (productExists == 0)
-        {
-            Connection.Close();
-            throw new Exception($"Product with ID {productID} no longer exists in the database. It may have been deleted.");
-        }
-
         string query = $"INSERT INTO SaleItems (SaleID, ProductID, Quantity, SalePrice) " +
                        $"VALUES (@saleID, @productID, @quantity, @saleprice)";
         SqlCommand command = new SqlCommand(query, Connection);
@@ -507,6 +486,6 @@ public class DatabaseManager
 
         command.ExecuteNonQuery();
 
-        Connection.Close(); 
+        Connection.Close();
     }
 }

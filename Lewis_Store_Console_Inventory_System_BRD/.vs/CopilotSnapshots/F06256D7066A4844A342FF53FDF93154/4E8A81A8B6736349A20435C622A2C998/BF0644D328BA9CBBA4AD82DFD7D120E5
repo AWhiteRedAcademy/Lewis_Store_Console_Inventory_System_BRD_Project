@@ -228,6 +228,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 return;
             }
 
+
+
             var footer = new Markup(
                 $"[bold]Subtotal:[/] {subtotal:C2}\n" +
                 $"[bold]VAT (15%):[/] {tax:C2}\n" +
