@@ -16,7 +16,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             public static void AddProduct()
             {
-                Console.Clear();
+
+                if (AnsiConsole.Prompt(new SelectionPrompt<string>()
+                    .Title("[yellow]Press Enter To Add An Item Or Cancel[/]")
+                    .AddChoices("Add Item", "[red]Cancel[/]")) == "Cancel")
+                {
+                    return;
+                }
 
                 var ItemAddPanel = new Panel("")
                 .Header("[lightgreen bold]ADD ITEM[/]", Justify.Center)
@@ -359,13 +365,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Display History = new Display();
                 History.SalesHistory();
 
-                AnsiConsole.MarkupLine("\n[yellow]Press Any Key To Continue[/]");
-                Console.ReadKey();
                 Console.Clear();
             }
 
         public static bool MainMenu()
-            {
+        {
                 AnsiConsole.Clear();
                 AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
                 AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
@@ -386,7 +390,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                     case "View Stock":
                         {
-                            Console.Clear();
 
                             Display View = new Display();
                             View.ViewStock();
@@ -439,7 +442,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             return true;
                         }
                 }
-            }
+        }
 
 
 

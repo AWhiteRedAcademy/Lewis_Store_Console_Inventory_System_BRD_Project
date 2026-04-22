@@ -216,7 +216,8 @@ public class Display
         StockTable = new Table()
                     .RoundedBorder()
                     .BorderColor(Color.Grey)
-                    .ShowRowSeparators();
+                    .ShowRowSeparators()
+                    .Expand();
         StockTable.AddColumn("[yellow]Item[/]");
         StockTable.AddColumn("[yellow]Description[/]");
         StockTable.AddColumn("[yellow]Qty[/]");
@@ -277,7 +278,8 @@ public class Display
             .Header("[lightgreen bold]Delete Product[/]", Justify.Center)
             .RoundedBorder()
             .BorderColor(Color.Blue)
-            .Padding(2, 1);
+            .Padding(2, 1)
+            .Expand();
 
         var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
             {
@@ -331,11 +333,8 @@ public class Display
             .RoundedBorder()
             .BorderColor(Color.Grey)
             .ShowRowSeparators();
-        SalesTable.AddColumn("[yellow]Sale ID[/]");
-        SalesTable.AddColumn("[yellow]Subtotal[/]");
-        SalesTable.AddColumn("[yellow]VAT Amount[/]");
-        SalesTable.AddColumn("[yellow]Total Amount[/]");
-        SalesTable.AddColumn("[yellow]Sale Date[/]");
+
+        SalesTable.AddColumns(new string[] { "[yellow]Sale Number[/]", "[yellow]Sale ID[/]", "[yellow]Subtotal[/]", "[yellow]VAT Amount[/]", "[yellow]Total Amount[/]", "[yellow]Sale Date[/]" });
         
         DatabaseManager SaleHist = new DatabaseManager();
         SaleHist.SaleHistory(SalesTable, SaleItemHist);
@@ -352,13 +351,17 @@ public class Display
             .BorderColor(Color.Blue)
             .Padding(2, 1);
 
-        Columns SalesHistMenu = new Columns(new Spectre.Console.Rendering.IRenderable[]{
+        while (true)
+        {
+            AnsiConsole.Clear();
+
+            Columns SalesHistMenu = new Columns(new Spectre.Console.Rendering.IRenderable[]{
               SalesPanel,
                 ItemPanel
             });
 
-        while (true)
-        {
+            AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
+            AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
             AnsiConsole.Write(SalesHistMenu);
             
             var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
@@ -366,10 +369,18 @@ public class Display
                 .PageSize(10)
                 .EnableSearch()
                 .SearchPlaceholderText("Type to search Sales...")
-                .AddChoices("")
+                .AddChoices("[red]Exit[/]")
+                .AddChoices(SaleItemHist.Select((table, index) => $"Sale {index + 1}").ToList())
                 .WrapAround()); 
 
-            ItemPanel = new Panel(SaleItemHist[1]) {Width = 45}
+            if(Choice == "[red]Exit[/]")
+            {
+                Console.Clear();
+                break;
+            }
+
+            int selectedIndex = int.Parse(Choice.Split(' ')[1]) - 1;
+            ItemPanel = new Panel(SaleItemHist[selectedIndex]) {Width = 45}
             .Header("[lightgreen bold]Items From Sale[/]", Justify.Center)
             .RoundedBorder()
             .BorderColor(Color.Blue)
@@ -418,6 +429,7 @@ public class DatabaseManager
             {
                 string saleDate = readerSale["SalesDate"]?.ToString() ?? DateTime.Now.ToShortDateString();
                 SalesTable.AddRow(
+                    "Sale " + (Count + 1).ToString(),
                     readerSale["SaleID"]?.ToString(),
                     "R" + (readerSale["Subtotal"]?.ToString()),
                     "R" + (readerSale["VATAmount"]?.ToString()),
