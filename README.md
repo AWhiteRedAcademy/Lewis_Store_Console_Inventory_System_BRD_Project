@@ -5,7 +5,7 @@
 
 This is a C# console application created for managing stock in a Lewis Store inventory system. The program allows the user to add products, view current stock, sell items, update product details, delete products, and view sales history.
 
-The system is designed to run in the console and uses Spectre.Console to make the menu and tables easier to read. Product and sales information is stored in a SQL Server database.
+The application is designed to run in the console and uses Spectre.Console to make the menu and tables easier to read. Product and sales information is stored in a SQL Server database.
 
 ## Main Features
 
