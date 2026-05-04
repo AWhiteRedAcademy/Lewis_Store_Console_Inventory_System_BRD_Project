@@ -22,7 +22,7 @@ public class Product
         get { return _Quantity; }
         set
         {
-            if (value >= 0)
+            if (value > 0)
             {
                 _Quantity = value;
             }
@@ -184,12 +184,12 @@ public class SaleItem
     private decimal SalePrice { get; set; }
     private int Quantity { get; set; }
 
-    public SaleItem(int saleID, int productID, int quantity, decimal salePrice)
+    public SaleItem(int saleID, int ProductID, int Quantity, decimal SalePrice)
     {
         SaleID = saleID;
-        ProductID = productID;
-        Quantity = quantity;
-        SalePrice = salePrice;
+        ProductID = ProductID;
+        Quantity = Quantity;
+        SalePrice = SalePrice;
     }
 
     public void AddSaleItem()
@@ -216,8 +216,7 @@ public class Display
         StockTable = new Table()
                     .RoundedBorder()
                     .BorderColor(Color.Grey)
-                    .ShowRowSeparators()
-                    .Expand();
+                    .ShowRowSeparators();
         StockTable.AddColumn("[yellow]Item[/]");
         StockTable.AddColumn("[yellow]Description[/]");
         StockTable.AddColumn("[yellow]Qty[/]");
@@ -229,7 +228,7 @@ public class Display
 
         StockWarningRow = new Rows(stockwarn);
 
-        StockWarning = new Panel(StockWarningRow) {Width = 50 }
+        StockWarning = new Panel(StockWarningRow)
                     .Header("[red bold]Stock Warnings[/]", Justify.Center)
                     .RoundedBorder()
                     .BorderColor(Color.Red)
@@ -278,8 +277,7 @@ public class Display
             .Header("[lightgreen bold]Delete Product[/]", Justify.Center)
             .RoundedBorder()
             .BorderColor(Color.Blue)
-            .Padding(2, 1)
-            .Expand();
+            .Padding(2, 1);
 
         var DisplayLayout = new Columns(new Spectre.Console.Rendering.IRenderable[]
             {
@@ -324,74 +322,6 @@ public class Display
         AnsiConsole.Write(SellLayout);
 
     }
-
-    public void SalesHistory()
-    {
-        List<Table> SaleItemHist = new List<Table>();
-
-        Table SalesTable = new Table()
-            .RoundedBorder()
-            .BorderColor(Color.Grey)
-            .ShowRowSeparators();
-
-        SalesTable.AddColumns(new string[] { "[yellow]Sale Number[/]", "[yellow]Sale ID[/]", "[yellow]Subtotal[/]", "[yellow]VAT Amount[/]", "[yellow]Total Amount[/]", "[yellow]Sale Date[/]" });
-        
-        DatabaseManager SaleHist = new DatabaseManager();
-        SaleHist.SaleHistory(SalesTable, SaleItemHist);
-
-        Panel SalesPanel = new Panel(SalesTable) { Width = 70}
-            .Header("[lightgreen bold]Sales History[/]", Justify.Center)
-            .RoundedBorder()
-            .BorderColor(Color.Blue)
-            .Padding(2, 1)
-            .Expand();
-
-        Panel ItemPanel = new Panel(SaleItemHist[0]) { Width = 45 }
-            .Header("[lightgreen bold]Items From Sale[/]", Justify.Center)
-            .RoundedBorder()
-            .BorderColor(Color.Blue)
-            .Padding(2, 1)
-            .Expand();
-
-        while (true)
-        {
-            AnsiConsole.Clear();
-
-            Columns SalesHistMenu = new Columns(new Spectre.Console.Rendering.IRenderable[]{
-              SalesPanel,
-                ItemPanel
-            });
-
-            AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
-            AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
-            AnsiConsole.Write(SalesHistMenu);
-            
-            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .Title("\nSelect A Sale To View Items")
-                .PageSize(10)
-                .EnableSearch()
-                .SearchPlaceholderText("Type to search Sales...")
-                .AddChoices("[red]Exit[/]")
-                .AddChoices(SaleItemHist.Select((table, index) => $"Sale {index + 1}").ToList())
-                .WrapAround()); 
-
-            if(Choice == "[red]Exit[/]")
-            {
-                Console.Clear();
-                break;
-            }
-
-            int selectedIndex = int.Parse(Choice.Split(' ')[1]) - 1;
-            ItemPanel = new Panel(SaleItemHist[selectedIndex]) {Width = 45}
-            .Header("[lightgreen bold]Items From Sale[/]", Justify.Center)
-            .RoundedBorder()
-            .BorderColor(Color.Blue)
-            .Padding(2, 1)
-            .Expand();
-
-            Console.Clear();
-        }
-    }
 }
 
 public class DatabaseManager
@@ -412,79 +342,6 @@ public class DatabaseManager
         }
     }
 
-    public void SaleHistory(Table SalesTable, List<Table> SaleItemHist) 
-    {
-        Connection.Open();
-        try
-        {
-            SqlCommand commandSale = new SqlCommand("SELECT COUNT(*) FROM Sales", Connection);
-            SqlDataReader readerSale = commandSale.ExecuteReader();
-
-            int[] SaleIDCount = new int[readerSale.Read() ? (int)readerSale[0] : 0];
-            readerSale.Close();
-
-            commandSale = new SqlCommand("SELECT * FROM Sales", Connection);
-            readerSale = commandSale.ExecuteReader();
-            int Count = 0;
-
-            while (readerSale.Read())
-            {
-                string saleDate = readerSale["SalesDate"]?.ToString() ?? DateTime.Now.ToShortDateString();
-                SalesTable.AddRow(
-                    "Sale " + (Count + 1).ToString(),
-                    readerSale["SaleID"]?.ToString(),
-                    "R" + (readerSale["Subtotal"]?.ToString()),
-                    "R" + (readerSale["VATAmount"]?.ToString()),
-                    "R" + (readerSale["TotalAmount"]?.ToString()),
-                    DateTime.Parse(saleDate).ToShortDateString()
-                );
-
-                int SaleID = int.Parse(readerSale["SaleID"].ToString());
-                SaleIDCount[Count] = SaleID;
-                Count++;
-            }
-
-            readerSale.Close();
-            commandSale.Dispose();
-
-            foreach (int SaleID in SaleIDCount)
-            {
-
-                Table SaleItemsTable = new Table()
-                    .RoundedBorder()
-                    .BorderColor(Color.Grey)
-                    .ShowRowSeparators();
-
-                SaleItemsTable.AddColumn("[yellow]Sale Item ID[/]");
-                SaleItemsTable.AddColumn("[yellow]Product ID[/]");
-                SaleItemsTable.AddColumn("[yellow]Quantity[/]");
-                SaleItemsTable.AddColumn("[yellow]Price[/]");
-
-                SqlCommand commandItems = new SqlCommand("SELECT * FROM SaleItems WHERE SaleID = @SaleID", Connection);
-                commandItems.Parameters.AddWithValue("@SaleID", SaleID);
-
-                SqlDataReader readerItems = commandItems.ExecuteReader();
-
-                while (readerItems.Read())
-                {
-                    SaleItemsTable.AddRow(
-                        readerItems["SaleItemID"]?.ToString(),
-                        readerItems["ProductID"]?.ToString(),
-                        readerItems["Quantity"]?.ToString(),
-                        "R" + (readerItems["SalePrice"]?.ToString())
-                    );
-                }
-                readerItems.Close();
-                commandItems.Dispose();
-
-                SaleItemHist.Add(SaleItemsTable);
-            }
-        }
-        finally
-        {
-            Connection.Close();
-        }
-    }
     public (List<string> ProductList, List<IRenderable> StockWarn) DisplayStock(Table DisplayTable)
     {
 
@@ -492,8 +349,6 @@ public class DatabaseManager
 
         List<string> productlist = new List<string>();
         List<IRenderable> stockwarn = new List<IRenderable>();
-
-        stockwarn.Add(new Markup("[red]Warning: [/]"));
 
         int Count = 0;
 
@@ -505,22 +360,12 @@ public class DatabaseManager
             DisplayTable.AddRow(reader["ProductName"].ToString(), reader["Description"].ToString(), reader["QuantityInStock"].ToString(), "R" + reader["PriceExcludingVAT"].ToString());
             productlist.Add($"ID: {reader["ProductID"].ToString()}){Count + 1}. " + reader["ProductName"].ToString());
 
-            if (int.Parse(reader["QuantityInStock"].ToString()) == 0)
+            if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
             {
-                stockwarn.Add(new Markup($"[red bold]{reader["ProductName"].ToString()} is out of stock![/]"));
-            }
-            else if (int.Parse(reader["QuantityInStock"].ToString()) < 10)
-            {
-                stockwarn.Add(new Markup($"[red bold]{reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
+                stockwarn.Add(new Markup($"[red bold]WARNING: {reader["ProductName"].ToString()} is low in stock! Only {reader["QuantityInStock"].ToString()} left![/]"));
             }
 
             Count++;
-        }
-
-        if (stockwarn.Count < 2)
-        {
-            stockwarn.Clear();
-            stockwarn.Add(new Markup("[green bold]All Stock Levels Are Sufficient![/]"));
         }
 
         reader.Close();
@@ -530,37 +375,23 @@ public class DatabaseManager
 
     }
 
-    public Product? PullProduct(int ItemID)
+    public Product PullProduct(int ItemID)
     {
         Connection.Open();
-        try
-        {
-            SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
-            command.Parameters.AddWithValue("ID", ItemID);
 
-            SqlDataReader reader = command.ExecuteReader();
-            
-            if (!reader.Read())
-            {
-                reader.Close();
-                return null;  // Product not found
-            }
-            
-            Product Item = new Product(
-                ItemID, 
-                reader["ProductName"]?.ToString() ?? "Unknown",
-                reader["Description"]?.ToString() ?? "N/A",
-                int.Parse(reader["QuantityInStock"]?.ToString() ?? "0"),
-                decimal.Parse(reader["PriceExcludingVAT"]?.ToString() ?? "0")
-            );
+        SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
 
-            reader.Close();
-            return Item;
-        }
-        finally
-        {
-            Connection.Close();
-        }
+        command.Parameters.AddWithValue("ID", ItemID);
+
+        SqlDataReader reader = command.ExecuteReader();
+        reader.Read();
+
+        Product Item = new Product(ItemID, reader["ProductName"].ToString(), reader["Description"].ToString(), int.Parse(reader["QuantityInStock"].ToString()), decimal.Parse(reader["PriceExcludingVAT"].ToString()));
+
+        reader.Close();
+        Connection.Close();
+
+        return Item;
     }
 
     public void AddProduct(string ProductName, string Description, int QuantityInStock, decimal PriceExcludingVAT)
@@ -644,19 +475,6 @@ public class DatabaseManager
     {
         Connection.Open();
 
-        // Validate that the ProductID still exists in the database
-        string validateQuery = "SELECT COUNT(*) FROM Products WHERE ProductID = @productID";
-        SqlCommand validateCommand = new SqlCommand(validateQuery, Connection);
-        validateCommand.Parameters.AddWithValue("@productID", productID);
-
-        int productExists = (int)validateCommand.ExecuteScalar();
-
-        if (productExists == 0)
-        {
-            Connection.Close();
-            throw new Exception($"Product with ID {productID} no longer exists in the database. It may have been deleted.");
-        }
-
         string query = $"INSERT INTO SaleItems (SaleID, ProductID, Quantity, SalePrice) " +
                        $"VALUES (@saleID, @productID, @quantity, @saleprice)";
         SqlCommand command = new SqlCommand(query, Connection);
@@ -668,6 +486,6 @@ public class DatabaseManager
 
         command.ExecuteNonQuery();
 
-        Connection.Close(); 
+        Connection.Close();
     }
 }

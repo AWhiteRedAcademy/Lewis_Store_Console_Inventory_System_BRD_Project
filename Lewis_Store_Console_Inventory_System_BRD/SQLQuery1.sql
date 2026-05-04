@@ -1,5 +1,8 @@
 use LEWIS_STORE_STOCK
 
+CREATE DATABASE TEST;
+
+use Test;
 CREATE Table Sales(
 	SaleID	int IDENTITY(1,1) PRIMARY KEY,
 	Subtotal	decimal(10,2) NOT NULL,
@@ -33,3 +36,7 @@ CREATE TABLE SaleItems(
 INSERT INTO Products(ProductName,Description,QuantityInStock,PriceExcludingVAT) VALUES('Steel Fan', 'Its a steel fan with 16cm blades', 100, 1250.50)
 
 DELETE FROM Products WHERE ProductName = '""'
+
+SELECT * FROM Products, SaleItems, Sales
+
+DELETE FROM SALES

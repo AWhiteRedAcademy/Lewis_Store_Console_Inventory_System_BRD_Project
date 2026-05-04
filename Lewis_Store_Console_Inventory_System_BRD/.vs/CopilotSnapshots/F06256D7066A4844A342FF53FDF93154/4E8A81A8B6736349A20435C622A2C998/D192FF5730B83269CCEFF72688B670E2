@@ -5,7 +5,6 @@ using System.ComponentModel.Design;
 using System.Data.SqlClient;
 using System.Threading.Channels;
 using System.Xml.Linq;
-using SqlClient = System.Data.SqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -16,13 +15,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             public static void AddProduct()
             {
-
-                if (AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("[yellow]Press Enter To Add An Item Or Cancel[/]")
-                    .AddChoices("Add Item", "[red]Cancel[/]")) == "Cancel")
-                {
-                    return;
-                }
+                Console.Clear();
 
                 var ItemAddPanel = new Panel("")
                 .Header("[lightgreen bold]ADD ITEM[/]", Justify.Center)
@@ -234,6 +227,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 return;
             }
 
+
+
             var footer = new Markup(
                 $"[bold]Subtotal:[/] {subtotal:C2}\n" +
                 $"[bold]VAT (15%):[/] {tax:C2}\n" +
@@ -360,23 +355,15 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Console.Clear();
             }
 
-            public static void ViewSalesHistory()
+            public static bool MainMenu()
             {
-                Display History = new Display();
-                History.SalesHistory();
-
-                Console.Clear();
-            }
-
-        public static bool MainMenu()
-        {
                 AnsiConsole.Clear();
                 AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
                 AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
 
                 var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("\nPlease Select An Option")
-                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "View Sales History", "Exit")
+                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "Exit")
                 .WrapAround());
 
                 switch (Choice)
@@ -390,6 +377,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                     case "View Stock":
                         {
+                            Console.Clear();
 
                             Display View = new Display();
                             View.ViewStock();
@@ -422,12 +410,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             Console.Clear();
                             return true;
                         }
-                    case "View Sales History":
-                        {
-                            ViewSalesHistory();
-                            Console.Clear();
-                            return true;
-                        }
                     case "Exit":
                         {
                             Console.Clear();
@@ -442,16 +424,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                             return true;
                         }
                 }
-        }
+            }
 
 
 
             static void Main(string[] args)
             {
-                Console.SetWindowSize(150, 50);
-                Console.SetBufferSize(300, 50);
 
-                AnsiConsole.Profile.Width = 150;
                 bool showMenu = true;
 
                 while (showMenu)
