@@ -1,8 +1,8 @@
+
+CREATE DATABASE LEWIS_STORE_STOCK;
+
 use LEWIS_STORE_STOCK
 
-CREATE DATABASE TEST;
-
-use Test;
 CREATE Table Sales(
 	SaleID	int IDENTITY(1,1) PRIMARY KEY,
 	Subtotal	decimal(10,2) NOT NULL,
@@ -10,10 +10,6 @@ CREATE Table Sales(
 	TotalAmount	decimal(10,2) NOT NULL,
 	SalesDate	DATETIME NOT NULL,	
 )
-
-SELECT * FROM Sales
-SELECT * FROM Products
-SELECT * FROM SaleItems
 
 CREATE Table Products(
 	ProductID int IDENTITY(1,1) PRIMARY KEY,
@@ -32,11 +28,3 @@ CREATE TABLE SaleItems(
 	FOREIGN KEY (SaleID) REFERENCES Sales(SaleID),
 	FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 )
-
-INSERT INTO Products(ProductName,Description,QuantityInStock,PriceExcludingVAT) VALUES('Steel Fan', 'Its a steel fan with 16cm blades', 100, 1250.50)
-
-DELETE FROM Products WHERE ProductName = '""'
-
-SELECT * FROM Products, SaleItems, Sales
-
-DELETE FROM SALES
