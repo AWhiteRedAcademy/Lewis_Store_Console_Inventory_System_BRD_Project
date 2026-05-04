@@ -448,7 +448,10 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
             static void Main(string[] args)
             {
+                Console.SetWindowSize(150, 50);
+                Console.SetBufferSize(300, 50);
 
+                AnsiConsole.Profile.Width = 150;
                 bool showMenu = true;
 
                 while (showMenu)

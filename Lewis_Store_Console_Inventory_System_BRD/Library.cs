@@ -343,13 +343,15 @@ public class Display
             .Header("[lightgreen bold]Sales History[/]", Justify.Center)
             .RoundedBorder()
             .BorderColor(Color.Blue)
-            .Padding(2, 1);
+            .Padding(2, 1)
+            .Expand();
 
         Panel ItemPanel = new Panel(SaleItemHist[0]) { Width = 45 }
             .Header("[lightgreen bold]Items From Sale[/]", Justify.Center)
             .RoundedBorder()
             .BorderColor(Color.Blue)
-            .Padding(2, 1);
+            .Padding(2, 1)
+            .Expand();
 
         while (true)
         {
