@@ -417,7 +417,7 @@ public class DatabaseManager
         Connection.Open();
         try
         {
-            SqlC     ommand commandSale = new SqlCommand("SELECT COUNT(*) FROM Sales", Connection);
+            SqlCommand commandSale = new SqlCommand("SELECT COUNT(*) FROM Sales", Connection);
             SqlDataReader readerSale = commandSale.ExecuteReader();
 
             int[] SaleIDCount = new int[readerSale.Read() ? (int)readerSale[0] : 0];
