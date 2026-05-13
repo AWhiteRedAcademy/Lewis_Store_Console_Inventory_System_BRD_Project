@@ -17,19 +17,24 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             public static void AddProduct()
             {
 
-                if (AnsiConsole.Prompt(new SelectionPrompt<string>()
+                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("[yellow]Press Enter To Add An Item Or Cancel[/]")
-                    .AddChoices("Add Item", "[red]Cancel[/]")) == "Cancel")
-                {
-                    return;
-                }
+                    .AddChoices("Add Item", "[red]Cancel[/]"));
+
+            if (Choice.Equals("[red]Cancel[/]"))
+            {
+                Console.Clear();
+                return;
+            }
+            else
+            {
 
                 var ItemAddPanel = new Panel("")
-                .Header("[lightgreen bold]ADD ITEM[/]", Justify.Center)
-                .RoundedBorder()
-                .BorderColor(Color.Grey)
-                .Padding(2, 1)
-                .Expand();
+                    .Header("[lightgreen bold]ADD ITEM[/]", Justify.Center)
+                    .RoundedBorder()
+                    .BorderColor(Color.Grey)
+                    .Padding(2, 1)
+                    .Expand();
 
                 AnsiConsole.Write(Align.Center(ItemAddPanel));
 
@@ -98,7 +103,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                 AnsiConsole.MarkupLine("\n[green]Item Added Successfully[/]");
                 Console.ReadKey();
-                Console.Clear();
+            }
+            Console.Clear();
             }
 
             public static void SellItem()
