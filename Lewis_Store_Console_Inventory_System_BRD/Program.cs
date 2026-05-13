@@ -7,19 +7,20 @@ using System.Threading.Channels;
 using System.Xml.Linq;
 using SqlClient = System.Data.SqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Lewis_Store_Console_Inventory_System_BRD.Library;
 
 
 namespace Lewis_Store_Console_Inventory_System_BRD
 {
-        internal class Program
+    internal class Program
+    {
+
+        public static void AddProduct()
         {
 
-            public static void AddProduct()
-            {
-
-                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("[yellow]Press Enter To Add An Item Or Cancel[/]")
-                    .AddChoices("Add Item", "[red]Cancel[/]"));
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("[yellow]Press Enter To Add An Item Or Cancel[/]")
+                .AddChoices("Add Item", "[red]Cancel[/]"));
 
             if (Choice.Equals("[red]Cancel[/]"))
             {
@@ -105,22 +106,23 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 Console.ReadKey();
             }
             Console.Clear();
-            }
+        }
 
-            public static void SellItem()
+
+        public static void SellItem()
+        {
+            List<Product> CartItems = new List<Product>();
+
+            Display Sell = new Display();
+
+            List<string> ProductList = Sell.ProductList;
+            List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+            foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
             {
-                List<Product> CartItems = new List<Product>();
+                ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
 
-                Display Sell = new Display();
-
-                List<string> ProductList = Sell.ProductList;
-                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
-
-                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
-                {
-                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
-
-                }
+            }
 
             while (true)
             {
@@ -197,7 +199,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
                 }
             }
-            }
+        }
 
         public static void Checkout(List<Product> CartItems)
         {
@@ -268,205 +270,205 @@ namespace Lewis_Store_Console_Inventory_System_BRD
         }
 
         public static void UpdateProduct()
+        {
+            Display Update = new Display();
+            Update.UpdateStock();
+
+            List<string> ProductList = Update.ProductList;
+            List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+            foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
             {
-                Display Update = new Display();
-                Update.UpdateStock();
+                ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
 
-                List<string> ProductList = Update.ProductList;
-                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+            }
 
-                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
-                {
-                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
+            AnsiConsole.MarkupLine("\n[cyan]ℹ Select a product below to update[/]");
 
-                }
-
-                AnsiConsole.MarkupLine("\n[cyan]ℹ Select a product below to update[/]");
-
-                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("\nPlease Select A Product To Update")
-                    .PageSize(10)
-                    .EnableSearch()
-                    .SearchPlaceholderText("Type to search Products...")
-                    .AddChoices("[red]Cancel[/]")
-                    .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
-                    .WrapAround());
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nPlease Select A Product To Update")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
+                .WrapAround());
 
 
-                if (Choice.Equals("[red]Cancel[/]"))
+            if (Choice.Equals("[red]Cancel[/]"))
+            {
+                Console.Clear();
+                return;
+            }
+            else
+            {
+                string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
+
+                ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
+
+                DatabaseManager Pull = new DatabaseManager();
+                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
+
+                CurrentItem.UpdateProduct();
+
+            }
+
+        }
+
+        public static void DeleteProduct()
+        {
+
+            Display Delete = new Display();
+            Delete.DeleteStock();
+
+            List<string> ProductList = Delete.ProductList;
+            List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
+
+            foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
+            {
+                ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
+            }
+
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nPlease Select A Product To Delete")
+                .PageSize(10)
+                .EnableSearch()
+                .SearchPlaceholderText("Type to search Products...")
+                .AddChoices("[red]Cancel[/]")
+                .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
+                .WrapAround());
+
+            if (Choice.Equals("[red]Cancel[/]"))
+            {
+                Console.Clear();
+                return;
+            }
+            else
+            {
+                var Confirmation = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title("\nARE YOU SURE YOU WISH TO DELETE THIS ITEM?")
+                .AddChoices("[red]Cancel[/]", "[green]Yes[/]")
+                .WrapAround());
+
+                if (Confirmation.Equals("[red]Cancel[/]"))
                 {
                     Console.Clear();
                     return;
                 }
-                else
-                {
-                    string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
 
-                    ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
+                string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
 
-                    DatabaseManager Pull = new DatabaseManager();
-                    Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
+                ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
 
-                    CurrentItem.UpdateProduct();
+                DatabaseManager Pull = new DatabaseManager();
+                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
 
-                }
-
+                CurrentItem.DeleteProduct();
             }
+            Console.Clear();
+        }
 
-            public static void DeleteProduct()
-            {
+        public static void ViewSalesHistory()
+        {
+            Display History = new Display();
+            History.SalesHistory();
 
-                Display Delete = new Display();
-                Delete.DeleteStock();
-
-                List<string> ProductList = Delete.ProductList;
-                List<string> ProductInfo = new List<string>(ProductList.Where(p => p != null && p != "Null").Count());
-
-                foreach (string Product in ProductList.Where(p => p != null && p != "Null"))
-                {
-                    ProductInfo.Add(Product.Substring(Product.IndexOf(")") + 1, Product.Length - (Product.IndexOf(")") + 1)));
-                }
-
-                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("\nPlease Select A Product To Delete")
-                    .PageSize(10)
-                    .EnableSearch()
-                    .SearchPlaceholderText("Type to search Products...")
-                    .AddChoices("[red]Cancel[/]")
-                    .AddChoices(ProductInfo.Where(p => p != null && p != "Null"))
-                    .WrapAround());
-
-                if (Choice.Equals("[red]Cancel[/]"))
-                {
-                    Console.Clear();
-                    return;
-                }
-                else
-                {
-                    var Confirmation = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("\nARE YOU SURE YOU WISH TO DELETE THIS ITEM?")
-                    .AddChoices("[red]Cancel[/]", "[green]Yes[/]")
-                    .WrapAround());
-
-                    if (Confirmation.Equals("[red]Cancel[/]"))
-                    {
-                        Console.Clear();
-                        return;
-                    }
-
-                    string ProductID = ProductList.Where(p => p.Contains(Choice)).FirstOrDefault()?.Substring(0, ProductList.Where(p => p.Contains(Choice)).FirstOrDefault().IndexOf(")"));
-
-                    ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
-
-                    DatabaseManager Pull = new DatabaseManager();
-                    Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
-
-                    CurrentItem.DeleteProduct();
-                }
-                Console.Clear();
-            }
-
-            public static void ViewSalesHistory()
-            {
-                Display History = new Display();
-                History.SalesHistory();
-
-                Console.Clear();
-            }
+            Console.Clear();
+        }
 
         public static bool MainMenu()
         {
-                AnsiConsole.Clear();
-                AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
-                AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
+            AnsiConsole.Clear();
+            AnsiConsole.Write(new Rule("[lightgreen bold] The Lewis Store Inventory Management System[/]"));
+            AnsiConsole.MarkupLine("\n[cyan]ℹ Scroll with Arrow Keys, Press Enter to Select[/]");
 
-                var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .Title("\nPlease Select An Option")
-                .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "View Sales History", "Exit")
-                .WrapAround());
+            var Choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("\nPlease Select An Option")
+            .AddChoices("Add Item", "View Stock", "Sell Items", "Update Products", "Delete Products", "View Sales History", "Exit")
+            .WrapAround());
 
-                switch (Choice)
-                {
-                    case "Add Item":
-                        {
-                            AddProduct();
-                            Console.Clear();
-                            return true;
-                        }
-
-                    case "View Stock":
-                        {
-
-                            Display View = new Display();
-                            View.ViewStock();
-                            AnsiConsole.MarkupLine("[yellow]Press Any Key To Continue[/]");
-                            Console.ReadKey();
-
-                            AnsiConsole.Clear();
-                            return true;
-                        }
-                    case "Sell Items":
-                        {
-                            Console.Clear();
-
-                            SellItem();
-
-                            Console.Clear();
-                            return true;
-                        }
-                    case "Update Products":
-                        {
-                            UpdateProduct();
-
-                            Console.Clear();
-                            return true;
-                        }
-                    case "Delete Products":
-                        {
-                            DeleteProduct();
-
-                            Console.Clear();
-                            return true;
-                        }
-                    case "View Sales History":
-                        {
-                            ViewSalesHistory();
-                            Console.Clear();
-                            return true;
-                        }
-                    case "Exit":
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Exiting now");
-                            return false;
-                        }
-                    default:
-                        {
-                            Console.WriteLine("Invalid Choice, Option not available");
-                            Console.ReadKey();
-                            Console.Clear();
-                            return true;
-                        }
-                }
-        }
-
-
-
-            static void Main(string[] args)
+            switch (Choice)
             {
-                Console.SetWindowSize(150, 50);
-                Console.SetBufferSize(300, 50);
+                case "Add Item":
+                    {
+                        AddProduct();
+                        Console.Clear();
+                        return true;
+                    }
 
-                AnsiConsole.Profile.Width = 150;
-                bool showMenu = true;
+                case "View Stock":
+                    {
 
-                while (showMenu)
-                {
-                    showMenu = MainMenu();
-                }
+                        Display View = new Display();
+                        View.ViewStock();
+                        AnsiConsole.MarkupLine("[yellow]Press Any Key To Continue[/]");
+                        Console.ReadKey();
+
+                        AnsiConsole.Clear();
+                        return true;
+                    }
+                case "Sell Items":
+                    {
+                        Console.Clear();
+
+                        SellItem();
+
+                        Console.Clear();
+                        return true;
+                    }
+                case "Update Products":
+                    {
+                        UpdateProduct();
+
+                        Console.Clear();
+                        return true;
+                    }
+                case "Delete Products":
+                    {
+                        DeleteProduct();
+
+                        Console.Clear();
+                        return true;
+                    }
+                case "View Sales History":
+                    {
+                        ViewSalesHistory();
+                        Console.Clear();
+                        return true;
+                    }
+                case "Exit":
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Exiting now");
+                        return false;
+                    }
+                default:
+                    {
+                        Console.WriteLine("Invalid Choice, Option not available");
+                        Console.ReadKey();
+                        Console.Clear();
+                        return true;
+                    }
             }
-
         }
+
+
+
+        static void Main(string[] args)
+        {
+            Console.SetWindowSize(150, 50);
+            Console.SetBufferSize(300, 50);
+
+            AnsiConsole.Profile.Width = 150;
+            bool showMenu = true;
+
+            while (showMenu)
+            {
+                showMenu = MainMenu();
+            }
+        }
+
     }
-    
+}
+
 
