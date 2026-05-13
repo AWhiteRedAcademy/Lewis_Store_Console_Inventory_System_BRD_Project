@@ -151,7 +151,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 {
                     Console.Clear();
 
-                    Checkout(CartItems);
+                    if (CartItems.Count == 0)
+                    {
+                        AnsiConsole.MarkupLine("[red]Cart is empty. Please add at least one item before checkout.[/]");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    else 
+                    {
+                        Checkout(CartItems);
+                    }
 
                     Console.Clear();
                     return;
@@ -177,7 +186,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                         var QuantityPrompt = new TextPrompt<int>("[yellow]Quantity To Purchase: [/]")
                             .Validate(Quantity =>
                             {
-                                if (Quantity < 0)
+                                if (Quantity <= 0)
                                 {
                                     return ValidationResult.Error("[red]Quantity must be greater than 0[/]");
                                 }
@@ -456,8 +465,15 @@ namespace Lewis_Store_Console_Inventory_System_BRD
 
         static void Main(string[] args)
         {
-            Console.SetWindowSize(150, 50);
-            Console.SetBufferSize(300, 50);
+            try
+            {
+                Console.SetWindowSize(150, 50);
+                Console.SetBufferSize(300, 50);
+            }
+            catch
+            {
+                // Ignore if console size cannot be changed
+            }
 
             AnsiConsole.Profile.Width = 150;
             bool showMenu = true;
