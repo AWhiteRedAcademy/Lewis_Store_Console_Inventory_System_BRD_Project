@@ -46,13 +46,14 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
         public bool Active { get { return _Active; } set { _Active = value; } }
 
 
-        public Product(int productid, string name, string desc, int qty, decimal price)
+        public Product(int productid, string name, string desc, int qty, decimal price, bool active = true)
         {
             ProductID = productid;
             Name = name;
             Description = desc;
             Quantity = qty;
             PriceExclVAT = price;
+            Active = active;
         }
 
         public void AddProduct()

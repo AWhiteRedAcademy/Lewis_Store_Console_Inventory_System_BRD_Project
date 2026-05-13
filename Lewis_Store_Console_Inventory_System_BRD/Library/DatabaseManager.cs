@@ -25,6 +25,73 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
             }
         }
 
+        public static void EnsureDatabaseExists()
+        {
+            string masterConnectionString =
+                "Server=localhost;Database=master;Trusted_Connection=True;TrustServerCertificate=True;";
+
+            using SqlConnection connection = new SqlConnection(masterConnectionString);
+            connection.Open();
+
+            string createDatabaseQuery = @"
+            IF DB_ID('LEWIS_STORE_STOCK') IS NULL
+            BEGIN
+            CREATE DATABASE LEWIS_STORE_STOCK;
+        END";
+
+            using SqlCommand createDatabaseCommand = new SqlCommand(createDatabaseQuery, connection);
+            createDatabaseCommand.ExecuteNonQuery();
+
+            connection.ChangeDatabase("LEWIS_STORE_STOCK");
+
+            string createSalesTableQuery = @"
+        IF OBJECT_ID('Sales', 'U') IS NULL
+        BEGIN
+            CREATE TABLE Sales(
+                SaleID int IDENTITY(1,1) PRIMARY KEY,
+                Subtotal decimal(10,2) NOT NULL,
+                VATAmount decimal(10,2) NOT NULL,
+                TotalAmount decimal(10,2) NOT NULL,
+                SalesDate DATETIME NOT NULL
+            );
+        END";
+
+            using SqlCommand createSalesCommand = new SqlCommand(createSalesTableQuery, connection);
+            createSalesCommand.ExecuteNonQuery();
+
+            string createProductsTableQuery = @"
+        IF OBJECT_ID('Products', 'U') IS NULL
+        BEGIN
+            CREATE TABLE Products(
+                ProductID int IDENTITY(1,1) PRIMARY KEY,
+                ProductName varchar(100) NOT NULL,
+                Description varchar(255),
+                QuantityInStock int NOT NULL,
+                PriceExcludingVAT decimal(10, 2) NOT NULL,
+                ProductActive bit NOT NULL DEFAULT 1
+            );
+        END";
+
+            using SqlCommand createProductsCommand = new SqlCommand(createProductsTableQuery, connection);
+            createProductsCommand.ExecuteNonQuery();
+
+            string createSaleItemsTableQuery = @"
+        IF OBJECT_ID('SaleItems', 'U') IS NULL
+        BEGIN
+            CREATE TABLE SaleItems(
+                SaleItemID int IDENTITY(1,1) PRIMARY KEY,
+                SaleID int,
+                ProductID int,
+                Quantity int,
+                SalePrice DECIMAL(10,2),
+                FOREIGN KEY (SaleID) REFERENCES Sales(SaleID),
+                FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+            );
+        END";
+
+            using SqlCommand createSaleItemsCommand = new SqlCommand(createSaleItemsTableQuery, connection);
+            createSaleItemsCommand.ExecuteNonQuery();
+        }
         public void SaleHistory(Table SalesTable, List<Table> SaleItemHist)
         {
             Connection.Open();
@@ -110,7 +177,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
 
             int Count = 0;
 
-            SqlCommand command = new SqlCommand("SELECT * FROM Products", Connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductActive = 1", Connection);
             SqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -164,7 +231,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
                     reader["ProductName"]?.ToString() ?? "Unknown",
                     reader["Description"]?.ToString() ?? "N/A",
                     int.Parse(reader["QuantityInStock"]?.ToString() ?? "0"),
-                    decimal.Parse(reader["PriceExcludingVAT"]?.ToString() ?? "0")
+                    decimal.Parse(reader["PriceExcludingVAT"]?.ToString() ?? "0"),
+                    bool.Parse(reader["ProductActive"]?.ToString() ?? "true")
                 );
 
                 reader.Close();

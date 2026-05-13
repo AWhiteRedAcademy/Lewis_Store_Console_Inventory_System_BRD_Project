@@ -83,7 +83,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     .Validate(price =>
                     {
                         if (price <= 0)
-                            return ValidationResult.Error("[red]Price cannot be negative[/]");
+                            return ValidationResult.Error("[red]Price must be greater than 0[/]");
                         else if (price > 1000000)
                             return ValidationResult.Error("[red]Price cannot exceed 1,000,000[/]");
                         else
@@ -181,7 +181,17 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     else
                     {
                         DatabaseManager Pull = new DatabaseManager();
-                        CartItems.Add(Pull.PullProduct(ProductID));
+
+                        Product? pulledProduct = Pull.PullProduct(ProductID);
+
+                        if (pulledProduct == null)
+                        {
+                            AnsiConsole.MarkupLine("[red]Product could not be found or is inactive.[/]");
+                            Console.ReadKey();
+                            continue;
+                        }
+
+                        CartItems.Add(pulledProduct);
 
                         var QuantityPrompt = new TextPrompt<int>("[yellow]Quantity To Purchase: [/]")
                             .Validate(Quantity =>
@@ -317,10 +327,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
 
                 DatabaseManager Pull = new DatabaseManager();
-                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
 
-                CurrentItem.UpdateProduct();
+                Product? pulledProduct = Pull.PullProduct(int.Parse(ProductID));
 
+                if (pulledProduct == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Product could not be found or is inactive.[/]");
+                    Console.ReadKey();
+                    return;
+                }
+                pulledProduct.UpdateProduct();
             }
 
         }
@@ -371,9 +387,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 ProductID = ProductID.Substring(ProductID.IndexOf("ID: ") + 4, ProductID.Length - (ProductID.IndexOf("ID: ") + 4));
 
                 DatabaseManager Pull = new DatabaseManager();
-                Product CurrentItem = Pull.PullProduct(int.Parse(ProductID));
 
-                CurrentItem.DeleteProduct();
+                Product? pulledProduct = Pull.PullProduct(int.Parse(ProductID));
+
+                if (pulledProduct == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Product could not be found or is inactive.[/]");
+                    Console.ReadKey();
+                    return;
+                }
+                pulledProduct.DeleteProduct();
             }
             Console.Clear();
         }
@@ -477,6 +500,19 @@ namespace Lewis_Store_Console_Inventory_System_BRD
             }
 
             AnsiConsole.Profile.Width = 150;
+
+            try
+            {
+                DatabaseManager.EnsureDatabaseExists();
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine("[red]Database setup failed.[/]");
+                AnsiConsole.MarkupLine($"[yellow]{ex.Message}[/]");
+                Console.ReadKey();
+                return;
+            }
+
             bool showMenu = true;
 
             while (showMenu)
