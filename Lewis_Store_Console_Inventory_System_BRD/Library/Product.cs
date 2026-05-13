@@ -1,6 +1,7 @@
 ﻿using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Text;
 
 namespace Lewis_Store_Console_Inventory_System_BRD.Library
@@ -12,6 +13,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
         private string _Description;
         private int _Quantity;
         private decimal _PriceExclVAT;
+        private bool _Active;
 
         public int ProductID { get { return _ProductID; } set { _ProductID = value; } }
         public string Name { get { return _Name; } set { _Name = value; } }
@@ -40,6 +42,8 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
                 else { Console.WriteLine("ERROR CANNOT HAVE A PRICE OF ITEM BELOW 0"); }
             }
         }
+
+        public bool Active { get { return _Active; } set { _Active = value; } }
 
 
         public Product(int productid, string name, string desc, int qty, decimal price)
@@ -118,10 +122,16 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
                         PriceExclVAT = UpdatePrice;
                         break;
                     }
+                case "Active":
+                    {
+                        bool UpdateStatus = AnsiConsole.Prompt(new TextPrompt<bool>("Enter New Product Price:"));
+                        Active = UpdateStatus;
+                        break;
+                    }
             }
 
             DatabaseManager Update = new DatabaseManager();
-            Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
+            Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT, Active);
 
             AnsiConsole.MarkupLine("[green]Product Updated Successfully![/]");
             Console.ReadKey();
@@ -132,8 +142,6 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
             DatabaseManager Delete = new DatabaseManager();
             Delete.DeleteProduct(ProductID);
 
-            AnsiConsole.MarkupLine("[green]Product Deleted Successfully![/]");
-
             Console.ReadKey();
         }
 
@@ -141,7 +149,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
         {
             Quantity -= quantity;
             DatabaseManager Update = new DatabaseManager();
-            Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT);
+            Update.UpdateProduct(ProductID, Name, Description, Quantity, PriceExclVAT, Active);
         }
     }
 }

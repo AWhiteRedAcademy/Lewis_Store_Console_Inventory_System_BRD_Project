@@ -82,7 +82,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                 var PriceP = new TextPrompt<decimal>("[yellow]Price Excl.VAT: [/]")
                     .Validate(price =>
                     {
-                        if (price < 0)
+                        if (price <= 0)
                             return ValidationResult.Error("[red]Price cannot be negative[/]");
                         else if (price > 1000000)
                             return ValidationResult.Error("[red]Price cannot exceed 1,000,000[/]");
@@ -196,6 +196,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                                     return ValidationResult.Error("[red]Quantity exceeds available stock[/]");
                                 }
 
+
                                 return ValidationResult.Success();
                             });
 
@@ -243,7 +244,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD
                     SaleItems.AddSaleItem();
                 }
             }
-            catch (SqlClient.SqlException ex)
+            catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Error: One or more products in your cart are no longer available. The sale has been cancelled.[/]");
                 AnsiConsole.MarkupLine($"[yellow]Details: {ex.Message}[/]");

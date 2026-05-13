@@ -148,7 +148,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
             Connection.Open();
             try
             {
-                SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID", Connection);
+                SqlCommand command = new SqlCommand("SELECT * FROM Products WHERE ProductID = @ID AND NOT ProductActive = 0", Connection);
                 command.Parameters.AddWithValue("ID", ItemID);
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -195,11 +195,11 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
 
         }
 
-        public void UpdateProduct(int id, string Name, string Description, int Quantity, decimal Price)
+        public void UpdateProduct(int id, string Name, string Description, int Quantity, decimal Price, bool Active)
         {
             Connection.Open();
 
-            string query = $"UPDATE Products SET ProductName = @Name, Description = @Description, QuantityInStock = @Qty, PriceExcludingVAT = @Price WHERE ProductID = @ID";
+            string query = $"UPDATE Products SET ProductName = @Name, Description = @Description, QuantityInStock = @Qty, PriceExcludingVAT = @Price, ProductActive = @Active WHERE ProductID = @ID";
             SqlCommand command = new SqlCommand(query, Connection);
 
             command.Parameters.AddWithValue("@ID", id);
@@ -207,6 +207,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
             command.Parameters.AddWithValue("@Description", Description);
             command.Parameters.AddWithValue("@Qty", Quantity);
             command.Parameters.AddWithValue("@Price", Price);
+            command.Parameters.AddWithValue("@Active",Active);
 
             command.ExecuteNonQuery();
 
@@ -215,16 +216,27 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
 
         public void DeleteProduct(int id)
         {
-            Connection.Open();
+            try
+            {
+                Connection.Open();
 
-            string query = $"DELETE FROM Products WHERE ProductID = @ID";
-            SqlCommand command = new SqlCommand(query, Connection);
+                string query = "DELETE FROM Products WHERE ProductID = @ID";
+                SqlCommand command = new SqlCommand(query, Connection);
+                command.Parameters.AddWithValue("@ID", id);
 
-            command.Parameters.AddWithValue("@ID", id);
-
-            command.ExecuteNonQuery();
-
-            Connection.Close();
+                command.ExecuteNonQuery();
+            }
+            catch (SqlException ex)
+            {
+                AnsiConsole.MarkupLine("[red]Cannot delete this product because it has already been sold.[/]");
+                AnsiConsole.MarkupLine("[yellow]Rather update the quantity to 0 or mark it as inactive.[/]");
+                Console.ReadKey();
+            }
+            finally
+            {
+                if (Connection.State == System.Data.ConnectionState.Open)
+                    Connection.Close();
+            }
         }
         public int AddSale(decimal subtotal, decimal vatamount, decimal totalamount, DateTime saledate)
         {
