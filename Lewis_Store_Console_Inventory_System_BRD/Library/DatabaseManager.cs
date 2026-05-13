@@ -91,6 +91,25 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
 
             using SqlCommand createSaleItemsCommand = new SqlCommand(createSaleItemsTableQuery, connection);
             createSaleItemsCommand.ExecuteNonQuery();
+
+            string seedProductsQuery = @"
+    IF NOT EXISTS (SELECT 1 FROM Products)
+    BEGIN
+        INSERT INTO Products 
+            (ProductName, Description, QuantityInStock, PriceExcludingVAT, ProductActive)
+        VALUES
+            ('Samsung 55 Inch Smart TV', '55 inch UHD smart television', 12, 6999.99, 1),
+            ('Defy Fridge Freezer', 'Double door fridge freezer', 8, 8499.99, 1),
+            ('LG Washing Machine', 'Front loader washing machine', 10, 5999.99, 1),
+            ('Russell Hobbs Microwave', '30L silver microwave oven', 15, 1899.99, 1),
+            ('KIC Chest Freezer', 'Large white chest freezer', 6, 3999.99, 1),
+            ('Hisense Soundbar', 'Bluetooth TV soundbar', 20, 1299.99, 1),
+            ('HP Laptop', '15 inch laptop for home and office use', 7, 8999.99, 1),
+            ('Canon Printer', 'Wireless colour inkjet printer', 9, 2499.99, 1);
+    END";
+
+            using SqlCommand seedProductsCommand = new SqlCommand(seedProductsQuery, connection);
+            seedProductsCommand.ExecuteNonQuery();
         }
         public void SaleHistory(Table SalesTable, List<Table> SaleItemHist)
         {
