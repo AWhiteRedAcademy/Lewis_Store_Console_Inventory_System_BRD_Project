@@ -1,0 +1,3 @@
+C:\Users\Aidan\Desktop\LewisStoreApp\Lewis_Store_Console_Inventory_System_BRD.pdb
+C:\Users\Aidan\Desktop\LewisStoreApp\sni.dll
+C:\Users\Aidan\Desktop\LewisStoreApp\Lewis_Store_Console_Inventory_System_BRD.exe

@@ -1,15 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "iLv4RLEOdno=",
+  "dgSpecHash": "GNE9iM2U/8E=",
   "success": true,
   "projectFilePath": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Aidan\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.5\\microsoft.net.illink.tasks.10.0.5.nupkg.sha512",
     "C:\\Users\\Aidan\\.nuget\\packages\\runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\Aidan\\.nuget\\packages\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\Aidan\\.nuget\\packages\\runtime.win-x64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\Aidan\\.nuget\\packages\\runtime.win-x86.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\Aidan\\.nuget\\packages\\spectre.console\\0.54.0\\spectre.console.0.54.0.nupkg.sha512",
-    "C:\\Users\\Aidan\\.nuget\\packages\\system.data.sqlclient\\4.9.1\\system.data.sqlclient.4.9.1.nupkg.sha512"
+    "C:\\Users\\Aidan\\.nuget\\packages\\system.data.sqlclient\\4.9.1\\system.data.sqlclient.4.9.1.nupkg.sha512",
+    "C:\\Users\\Aidan\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.5\\microsoft.netcore.app.runtime.win-x64.10.0.5.nupkg.sha512",
+    "C:\\Users\\Aidan\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.5\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.5.nupkg.sha512",
+    "C:\\Users\\Aidan\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.5\\microsoft.aspnetcore.app.runtime.win-x64.10.0.5.nupkg.sha512"
   ],
   "logs": []
 }
