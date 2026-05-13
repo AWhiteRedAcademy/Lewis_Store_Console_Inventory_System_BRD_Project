@@ -8,7 +8,7 @@ CREATE Table Sales(
 	Subtotal	decimal(10,2) NOT NULL,
 	VATAmount	decimal(10,2) NOT NULL,
 	TotalAmount	decimal(10,2) NOT NULL,
-	SalesDate	DATETIME NOT NULL,	
+	SalesDate	DATETIME NOT NULL	
 )
 
 CREATE Table Products(
