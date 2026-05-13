@@ -15,7 +15,7 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
         {
             try
             {
-                string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;";
+                string connectionstring = "Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;TrustServerCertificate=True;";
                 Connection = new SqlConnection(connectionstring);
             }
             catch (Exception ex)

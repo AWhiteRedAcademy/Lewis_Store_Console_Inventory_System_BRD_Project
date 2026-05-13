@@ -150,6 +150,13 @@ namespace Lewis_Store_Console_Inventory_System_BRD.Library
                 .Padding(2, 1)
                 .Expand();
 
+            if (SaleItemHist.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]No sales history found yet.[/]");
+                Console.ReadKey();
+                return;
+            }
+
             Panel ItemPanel = new Panel(SaleItemHist[0]) { Width = 45 }
                 .Header("[lightgreen bold]Items From Sale[/]", Justify.Center)
                 .RoundedBorder()

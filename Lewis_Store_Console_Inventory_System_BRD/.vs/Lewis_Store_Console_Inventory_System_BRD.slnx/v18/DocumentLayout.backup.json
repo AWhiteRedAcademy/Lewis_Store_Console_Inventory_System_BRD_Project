@@ -1,29 +1,29 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\",
+  "WorkspaceRootPath": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\saleitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\saleitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\display.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\display.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\display.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\backspace_sd\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\saleitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\saleitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|c:\\users\\aidan\\onedrive - redacademy (pty) ltd\\lewis_store_console_inventory_system_brd\\lewis_store_console_inventory_system_brd\\library\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8ABF718B-AE57-B76F-1FA4-B73F4DE391BA}|Lewis_Store_Console_Inventory_System_BRD.csproj|solutionrelative:library\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -34,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -49,29 +49,25 @@
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{56df62a4-05a3-4e5b-aa1a-99371ccfb997}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Display.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Display.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Display.cs",
               "RelativeDocumentMoniker": "Library\\Display.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Display.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Display.cs",
               "RelativeToolTip": "Library\\Display.cs",
-              "ViewState": "AgIAAGsAAAAAAAAAAAAYwMcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAcwKUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-13T14:12:03.86Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "SaleItem.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\SaleItem.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\SaleItem.cs",
               "RelativeDocumentMoniker": "Library\\SaleItem.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\SaleItem.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\SaleItem.cs",
               "RelativeToolTip": "Library\\SaleItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -80,11 +76,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Sale.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Sale.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Sale.cs",
               "RelativeDocumentMoniker": "Library\\Sale.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Sale.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Sale.cs",
               "RelativeToolTip": "Library\\Sale.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -95,40 +91,38 @@
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "Product.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Product.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Product.cs",
               "RelativeDocumentMoniker": "Library\\Product.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Product.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\Product.cs",
               "RelativeToolTip": "Library\\Product.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAJEAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T14:10:27.818Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-13T14:10:27.818Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "DatabaseManager.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\DatabaseManager.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\DatabaseManager.cs",
               "RelativeDocumentMoniker": "Library\\DatabaseManager.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\DatabaseManager.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Library\\DatabaseManager.cs",
               "RelativeToolTip": "Library\\DatabaseManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0BAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBEAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-13T14:08:49.889Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\Backspace_SD\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
+              "ToolTip": "C:\\Users\\Aidan\\OneDrive - redAcademy (Pty) Ltd\\Lewis_Store_Console_Inventory_System_BRD\\Lewis_Store_Console_Inventory_System_BRD\\Program.cs",
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAEoAAAAAAAAAAAAUwCIAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-02T11:11:33.973Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-02T11:11:33.973Z"
             }
           ]
         }
