@@ -1,44 +1,224 @@
-[README.md](https://github.com/user-attachments/files/27230981/README.md)
 # Lewis Store Console Inventory System
 
-## Project Overview
+## Overview
 
-This is a C# console application created for managing stock in a Lewis Store inventory system. The program allows the user to add products, view current stock, sell items, update product details, delete products, and view sales history.
+The Lewis Store Console Inventory System is a C# console application for managing basic stock and sales records for a store environment.
 
-The application is designed to run in the console and uses Spectre.Console to make the menu and tables easier to read. Product and sales information is stored in a SQL Server database.
+The application allows the user to add products, view stock, sell items, update product details, delete products, and view sales history. It uses SQL Server to store product, sale, and sale item records.
+
+The application uses Spectre.Console to make the console menus and tables easier to read.
 
 ## Main Features
 
-The application opens with a main menu where the user can choose what they want to do. The user can add a new item by entering the product name, description, quantity, and price excluding VAT. The system validates the information so that blank names, negative quantities, and invalid prices are not accepted.
-
-The stock view shows all products currently saved in the database. It also shows stock warnings when an item is low in stock or out of stock.
-
-The sell item section allows the user to select products, choose quantities, and complete a sale. The system calculates the subtotal, VAT at 15 percent, and final total. A receipt is then displayed on screen.
-
-The update section allows the user to change a product name, description, quantity, or price. The delete section allows the user to remove a product after confirmation.
-
-The sales history section displays previous sales and the items linked to each sale.
+* Add new stock items
+* View active stock items
+* Sell items and calculate VAT
+* Update product name, description, quantity, and price
+* Delete or deactivate products
+* View sales history
+* Automatically create the database if it does not already exist
+* Automatically create the required database tables
+* Automatically add seed products when the Products table is empty
 
 ## Technologies Used
 
-This project was built using C# and .NET. It uses SQL Server for database storage, System.Data.SqlClient for database communication, and Spectre.Console for the console interface.
+* C#
+* .NET 10.0
+* SQL Server
+* System.Data.SqlClient
+* Spectre.Console
 
-## Database Information
+## Project Requirements
 
-The application connects to a local SQL Server database called LEWIS_STORE_STOCK. The current connection string is set inside the DatabaseManager class.
+Before running the application, make sure the computer has SQL Server installed and running.
+
+The application connects to SQL Server using Windows Authentication with this connection string:
 
 ```csharp
-Server=localhost;Database=LEWIS_STORE_STOCK;Trusted_Connection=True;
+Server=localhost;Database=LEWIS\_STORE\_STOCK;Trusted\_Connection=True;TrustServerCertificate=True;
 ```
 
-The database should contain tables for Products, Sales, and SaleItems. These tables are used to store stock records, completed sales, and the products sold in each sale.
+This means the application expects SQL Server to be available on the same computer.
 
-## How To Run The Project
+The Windows user running the application must also have permission to create and access a SQL Server database.
 
-Open the project in Visual Studio. Make sure SQL Server is installed and that the database named LEWIS_STORE_STOCK exists on the local machine. Check that the required tables have been created before running the program.
+## Database Setup
 
-Restore the NuGet packages if Visual Studio does not do this automatically. Build the project to check for errors, then run the application. The program will open in the console and show the main menu.
+The application includes an automatic database setup method called:
 
-## Notes
+```csharp
+EnsureDatabaseExists()
+```
 
-This system is intended for basic stock management and sales tracking. It is suitable for a small inventory system where products need to be added, updated, sold, and reviewed through a simple console interface.
+This method runs when the application starts.
+
+It performs the following steps:
+
+1. Connects to the SQL Server `master` database.
+2. Checks if the `LEWIS\_STORE\_STOCK` database exists.
+3. Creates the database if it does not exist.
+4. Switches to the `LEWIS\_STORE\_STOCK` database.
+5. Creates the `Sales` table if it does not exist.
+6. Creates the `Products` table if it does not exist.
+7. Creates the `SaleItems` table if it does not exist.
+8. Adds seed product data if the `Products` table is empty.
+
+Because of this, the user does not normally need to run the SQL script manually before opening the application.
+
+## Database Tables
+
+The application uses three main tables.
+
+### Products
+
+Stores the stock items.
+
+Main fields:
+
+* ProductID
+* ProductName
+* Description
+* QuantityInStock
+* PriceExcludingVAT
+* ProductActive
+
+### Sales
+
+Stores the overall sale records.
+
+Main fields:
+
+* SaleID
+* Subtotal
+* VATAmount
+* TotalAmount
+* SalesDate
+
+### SaleItems
+
+Stores the individual products sold in each sale.
+
+Main fields:
+
+* SaleItemID
+* SaleID
+* ProductID
+* Quantity
+* SalePrice
+
+## Seed Data
+
+When the application starts, it checks whether the `Products` table is empty.
+
+If the table is empty, it inserts sample products such as:
+
+* Samsung 55 Inch Smart TV
+* Defy Fridge Freezer
+* LG Washing Machine
+* Russell Hobbs Microwave
+* KIC Chest Freezer
+* Hisense Soundbar
+* HP Laptop
+* Canon Printer
+
+This gives the application sample stock to work with immediately.
+
+The seed data is only inserted when the `Products` table is empty, so it will not duplicate products every time the app opens.
+
+## How to Run the Application in Visual Studio
+
+1. Open the project in Visual Studio.
+2. Make sure SQL Server is installed and running.
+3. Build the solution.
+4. Run the project.
+5. The application will create the database and tables automatically if they do not exist.
+6. The main menu will open in the console.
+
+## Main Menu Options
+
+When the program opens, the following options are available:
+
+```text
+Add Item
+View Stock
+Sell Items
+Update Products
+Delete Products
+View Sales History
+Exit
+```
+
+## Publishing the Application for Presentation
+
+For presentation purposes, it is better to publish the application instead of running it from:
+
+```text
+bin/Debug/net10.0
+```
+
+Open Command Prompt or Terminal in the project folder and run:
+
+```bash
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "%USERPROFILE%\\Desktop\\LewisStoreApp"
+```
+
+This creates a cleaner published version of the application on the Desktop.
+
+The published folder can be moved to another location, but the application will still need SQL Server installed and running on the computer where it is used.
+
+```
+
+## Common Errors and Fixes
+
+### Database setup failed
+
+This usually means SQL Server is not running, SQL Server is not installed, or the current Windows user does not have permission to create the database.
+
+Check SQL Server and try again.
+
+### Cannot connect to localhost
+
+The app is trying to connect to SQL Server on the same computer.
+
+Make sure SQL Server is installed locally and that the service is running.
+
+### Application works on one computer but not another
+
+The app can be moved, but the new computer also needs SQL Server installed and running.
+
+If the app was not published as self-contained, the other computer may also need the correct .NET runtime installed.
+
+## Notes for Marking
+
+This project demonstrates:
+
+* Object-oriented programming using separate classes for products, sales, sale items, display logic, and database logic
+* SQL Server database integration
+* Input validation
+* Menu-driven console interaction
+* Automatic database creation
+* Seed data insertion
+* Basic stock and sales management
+
+## Project Structure
+
+```text
+Lewis\_Store\_Console\_Inventory\_System\_BRD
+│
+├── Program.cs
+├── Lewis\_Store\_Console\_Inventory\_System\_BRD.csproj
+├── Lewis\_Store\_StockCreation.sql
+├── Auto\_Increment\_Reset.sql
+│
+└── Library
+    ├── DatabaseManager.cs
+    ├── Display.cs
+    ├── Product.cs
+    ├── Sale.cs
+    └── SaleItem.cs
+```
+
+## Final Note
+
+The application should be run on a Windows machine with SQL Server available locally. The automatic database setup reduces the need for manual setup, but SQL Server itself still needs to be installed and accessible.
+
