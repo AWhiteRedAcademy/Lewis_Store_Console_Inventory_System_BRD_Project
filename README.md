@@ -166,7 +166,6 @@ This creates a cleaner published version of the application on the Desktop.
 
 The published folder can be moved to another location, but the application will still need SQL Server installed and running on the computer where it is used.
 
-```
 
 ## Common Errors and Fixes
 
