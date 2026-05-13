@@ -16,7 +16,8 @@ CREATE Table Products(
 	ProductName	varchar(100) NOT NULL,
 	Description varchar(255),
 	QuantityInStock	int NOT NULL,
-	PriceExcludingVAT decimal(10, 2) NOT NULL
+	PriceExcludingVAT decimal(10, 2) NOT NULL,
+	ProductActive bit NOT NULL DEFAULT 1
 )
 
 CREATE TABLE SaleItems(
